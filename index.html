@@ -1263,20 +1263,21 @@
 
   // Compatibilita con il codice esistente che usa google.script.run
   (function(){
-    let successHandler=null, failureHandler=null;
-    const runner = new Proxy({}, { get: function(target, prop) {
-      if(prop === "withSuccessHandler") return function(fn){ successHandler=fn; return runner; };
-      if(prop === "withFailureHandler") return function(fn){ failureHandler=fn; return runner; };
-      return function(){
-        const args=Array.prototype.slice.call(arguments);
-        let params={};
-        if(prop === "getEventoLuogo") params={idEvento:args[0]||""};
-        else if(prop === "registraVendita") params={data:args[0]||{}};
-        else if(prop === "getReportEvento") params={idEvento:args[0]||"",dataDal:args[1]||"",dataAl:args[2]||""};
-        apiCall(String(prop),params).then(function(data){ const fn=successHandler; successHandler=null; failureHandler=null; if(fn) fn(data); }).catch(function(err){ const fn=failureHandler; successHandler=null; failureHandler=null; if(fn) fn(err); });
-      };
-    }});
-    window.google = {script:{run:runner}};
+    function makeRunner(successHandler, failureHandler){
+      return new Proxy({}, { get: function(target, prop) {
+        if(prop === "withSuccessHandler") return function(fn){ return makeRunner(fn, failureHandler); };
+        if(prop === "withFailureHandler") return function(fn){ return makeRunner(successHandler, fn); };
+        return function(){
+          const args=Array.prototype.slice.call(arguments);
+          let params={};
+          if(prop === "getEventoLuogo") params={idEvento:args[0]||""};
+          else if(prop === "registraVendita") params={data:args[0]||{}};
+          else if(prop === "getReportEvento") params={idEvento:args[0]||"",dataDal:args[1]||"",dataAl:args[2]||""};
+          apiCall(String(prop),params).then(function(data){ if(successHandler) successHandler(data); }).catch(function(err){ if(failureHandler) failureHandler(err); });
+        };
+      }});
+    }
+    window.google = {script:{run:makeRunner(null,null)}};
   })();
 
   // =====================================================
@@ -1339,6 +1340,20 @@
     setStatoScannerIntegrato("Barcode non trovato"); setEsitoScannerIntegrato("Non presente negli articoli: "+pulito);
     const ricerca=document.getElementById("ricerca"); if(ricerca){ricerca.value=pulito; if(typeof cercaArticoli === "function") cercaArticoli();}
   }
+  function avviaScannerAutomaticamente(){
+    // Tentativo automatico; se il browser blocca l'accesso, il pulsante AVVIA resta disponibile.
+    try {
+      const box=document.getElementById("scannerIntegrato");
+      if (box) {
+        box.classList.add("aperto");
+        box.setAttribute("aria-hidden","false");
+      }
+      avviaScannerIntegrato();
+    } catch(e) {
+      console.warn("Avvio automatico fotocamera non riuscito:", e);
+    }
+  }
+
   async function avviaScannerIntegrato(){
     const video=document.getElementById("cameraVideo"); if(!video) return;
     try{
@@ -1372,7 +1387,9 @@
       caricaLuoghi();
       caricaArticoliRapidi();
 
-      avviaScannerAutomaticamente();
+      // La fotocamera viene avviata dal pulsante scanner: i browser mobili
+      // spesso richiedono un gesto dell'utente per concedere l'accesso.
+      if (typeof avviaScannerAutomaticamente === "function") avviaScannerAutomaticamente();
 
     }
   );
