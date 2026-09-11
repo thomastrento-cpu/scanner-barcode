@@ -1253,11 +1253,17 @@
       let timer = null;
       function cleanup() { if (timer) clearTimeout(timer); delete window[callbackName]; if (script.parentNode) script.parentNode.removeChild(script); }
       window[callbackName] = function(payload) { cleanup(); if (payload && payload.ok === false) { reject(new Error(payload.errore || payload.error || "Errore API")); return; } resolve(payload ? payload.data : null); };
-      const query = new URLSearchParams(); query.set("action", action); query.set("callback", callbackName);
-      Object.keys(params || {}).forEach(function(key) { const value=params[key]; if(value!==undefined && value!==null) query.set(key, typeof value === "string" ? value : JSON.stringify(value)); });
+      const parts = ["action=" + encodeURIComponent(action), "callback=" + encodeURIComponent(callbackName)];
+      Object.keys(params || {}).forEach(function(key) {
+        const value = params[key];
+        if (value !== undefined && value !== null) {
+          parts.push(encodeURIComponent(key) + "=" + encodeURIComponent(typeof value === "string" ? value : JSON.stringify(value)));
+        }
+      });
       script.onerror=function(){ cleanup(); reject(new Error("Impossibile raggiungere il backend Apps Script.")); };
       timer=setTimeout(function(){ cleanup(); reject(new Error("Timeout collegamento al backend Apps Script.")); }, API_TIMEOUT_MS);
-      script.src=API_URL+"?"+query.toString(); document.head.appendChild(script);
+      script.src = API_URL + "?" + parts.join("&");
+      document.head.appendChild(script);
     });
   }
 
