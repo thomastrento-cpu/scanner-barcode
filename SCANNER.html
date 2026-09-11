@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111111">
+  <title>Scanner Barcode</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; background:#111; color:#fff; font-family:Arial,sans-serif; }
+    body { min-height:100vh; display:flex; justify-content:center; }
+    .app { width:min(100%,560px); padding:14px; }
+    h1 { margin:4px 0 8px; font-size:22px; }
+    .stato { min-height:22px; margin-bottom:10px; font-size:14px; font-weight:700; }
+    .video-box { position:relative; width:100%; overflow:hidden; border-radius:14px; background:#000; }
+    video { display:block; width:100%; height:min(72vh,520px); min-height:300px; object-fit:cover; background:#000; }
+    .mirino { position:absolute; left:50%; top:50%; width:78%; height:28%; transform:translate(-50%,-50%); border:3px solid rgba(255,255,255,.9); border-radius:12px; pointer-events:none; }
+    .linea { position:absolute; left:11%; right:11%; top:50%; height:2px; background:rgba(255,255,255,.75); pointer-events:none; }
+    .pannello { margin-top:12px; padding:12px; border-radius:12px; background:#222; }
+    .risultato { min-height:24px; font-size:15px; line-height:1.4; }
+    .bottoni { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    button { border:0; border-radius:10px; padding:12px 16px; font-weight:700; cursor:pointer; }
+    button:disabled { opacity:.5; cursor:default; }
+    .nota { margin-top:10px; font-size:12px; opacity:.75; line-height:1.4; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>📷 Scanner barcode</h1>
+    <div id="stato" class="stato">Preparazione...</div>
+
+    <div class="video-box">
+      <video id="video" autoplay muted playsinline webkit-playsinline></video>
+      <div class="mirino"></div>
+      <div class="linea"></div>
+    </div>
+
+    <div class="pannello">
+      <div id="risultato" class="risultato">Avvio della fotocamera...</div>
+      <div class="bottoni">
+        <button id="avvia" type="button">📷 AVVIA</button>
+        <button id="stop" type="button" disabled>⏹ STOP</button>
+        <button id="chiudi" type="button">✕ CHIUDI</button>
+      </div>
+      <div class="nota">
+        Inquadra il codice a barre all'interno del riquadro. La lettura è continua.
+      </div>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/@zxing/browser@0.1.5/umd/zxing-browser.min.js"></script>
+  <script>
+    let reader = null;
+    let stream = null;
+    let attivo = false;
+    let avvioInCorso = false;
+    let ultimoCodice = "";
+    let ultimoTimestamp = 0;
+    const BLOCCO_DUPLICATO_MS = 1800;
+
+    const video = document.getElementById("video");
+    const stato = document.getElementById("stato");
+    const risultato = document.getElementById("risultato");
+    const btnAvvia = document.getElementById("avvia");
+    const btnStop = document.getElementById("stop");
+    const btnChiudi = document.getElementById("chiudi");
+
+    function setStato(testo) { stato.textContent = testo; }
+    function setRisultato(testo) { risultato.textContent = testo; }
+
+    function inviaCodice(codice) {
+      if (!window.opener || window.opener.closed) {
+        setRisultato("Finestra principale non disponibile. Puoi chiudere e riaprire lo scanner.");
+        return;
+      }
+
+      window.opener.postMessage({
+        type: "BARCODE_SCANNATO",
+        code: String(codice)
+      }, "*");
+    }
+
+    async function avvia() {
+      if (attivo || avvioInCorso) return;
+
+      if (!window.ZXingBrowser || !ZXingBrowser.BrowserMultiFormatReader) {
+        setStato("Errore libreria");
+        setRisultato("Impossibile caricare la libreria di scansione. Controlla la connessione internet.");
+        return;
+      }
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setStato("Fotocamera non supportata");
+        setRisultato("Questo browser non espone l'accesso alla fotocamera.");
+        return;
+      }
+
+      avvioInCorso = true;
+      btnAvvia.disabled = true;
+      setStato("Richiesta fotocamera...");
+      setRisultato("Consenti l'accesso alla fotocamera se richiesto.");
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        });
+
+        video.srcObject = stream;
+        await video.play();
+
+        reader = new ZXingBrowser.BrowserMultiFormatReader();
+        attivo = true;
+        avvioInCorso = false;
+        btnStop.disabled = false;
+        setStato("Fotocamera attiva");
+        setRisultato("Inquadra il codice a barre...");
+
+        reader.decodeFromVideoDevice(undefined, video, function(result, error) {
+          if (!attivo || !result) return;
+
+          let codice = "";
+          try {
+            codice = typeof result.getText === "function"
+              ? result.getText()
+              : (result.text !== undefined ? result.text : String(result));
+          } catch (e) { return; }
+
+          codice = String(codice || "").trim();
+          if (!codice) return;
+
+          const now = Date.now();
+          if (codice === ultimoCodice && now - ultimoTimestamp < BLOCCO_DUPLICATO_MS) return;
+          ultimoCodice = codice;
+          ultimoTimestamp = now;
+
+          setStato("Barcode riconosciuto");
+          setRisultato("Letto: " + codice);
+          inviaCodice(codice);
+        });
+
+      } catch (e) {
+        console.error(e);
+        avvioInCorso = false;
+        attivo = false;
+        btnAvvia.disabled = false;
+        btnStop.disabled = true;
+
+        let msg = "Impossibile accedere alla fotocamera.";
+        if (e && e.name === "NotAllowedError") msg = "Permesso fotocamera negato. Consenti la fotocamera nelle impostazioni del browser.";
+        else if (e && e.name === "NotFoundError") msg = "Nessuna fotocamera disponibile.";
+        else if (e && e.name === "NotReadableError") msg = "La fotocamera è già utilizzata da un'altra applicazione.";
+
+        setStato("Errore fotocamera");
+        setRisultato(msg);
+      }
+    }
+
+    function stop() {
+      attivo = false;
+      avvioInCorso = false;
+
+      if (reader) {
+        try { if (typeof reader.reset === "function") reader.reset(); } catch (e) {}
+        reader = null;
+      }
+
+      if (stream) {
+        try { stream.getTracks().forEach(track => track.stop()); } catch (e) {}
+        stream = null;
+      }
+
+      video.srcObject = null;
+      btnAvvia.disabled = false;
+      btnStop.disabled = true;
+      setStato("Scanner fermato");
+      setRisultato("Premi AVVIA per riprendere.");
+    }
+
+    btnAvvia.addEventListener("click", avvia);
+    btnStop.addEventListener("click", stop);
+    btnChiudi.addEventListener("click", function() {
+      stop();
+      if (window.opener && !window.opener.closed) window.close();
+    });
+
+    window.addEventListener("beforeunload", stop);
+
+    // Il click automatico viene fatto solo dopo il caricamento: se il browser lo blocca,
+    // l'utente può premere AVVIA.
+    window.addEventListener("load", function() {
+      setTimeout(avvia, 250);
+    });
+  </script>
+</body>
+</html>
