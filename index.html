@@ -73,15 +73,28 @@
     function setRisultato(testo) { risultato.textContent = testo; }
 
     function inviaCodice(codice) {
+      const codiceTesto = String(codice);
+
+      // Il codice deve rimanere visibile anche se questa pagina
+      // è stata aperta direttamente e non possiede una window.opener.
+      setRisultato("BARCODE: " + codiceTesto);
+
       if (!window.opener || window.opener.closed) {
-        setRisultato("Finestra principale non disponibile. Puoi chiudere e riaprire lo scanner.");
+        setStato("Barcode riconosciuto");
         return;
       }
 
-      window.opener.postMessage({
-        type: "BARCODE_SCANNATO",
-        code: String(codice)
-      }, "*");
+      try {
+        window.opener.postMessage({
+          type: "BARCODE_SCANNATO",
+          code: codiceTesto
+        }, "*");
+
+        setStato("Barcode inviato alla vendita");
+      } catch (e) {
+        console.error("Errore invio barcode:", e);
+        setStato("Barcode riconosciuto");
+      }
     }
 
     async function avvia() {
