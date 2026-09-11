@@ -3,8 +3,6 @@
 
 <head>
 
-  
-
   <meta charset="UTF-8">
 
   <meta
@@ -680,130 +678,687 @@
       font-size: 18px !important;
       -webkit-text-size-adjust: 100%;
     }
-  /* SCANNER BARCODE INTEGRATO */
 
-  function normalizzaCodiceBarcode(codice) {
-    return String(codice || "")
-      .trim()
-      .replace(/\s+/g, "")
-      .toLowerCase();
+/* =====================================================
+   SCANNER BARCODE ESTERNO
+   ===================================================== */
+
+.scanner-box {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid #d9d9d9;
+  border-radius: 14px;
+  background: #fafafa;
+}
+
+.scanner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.scanner-titolo { font-weight: 700; }
+.scanner-stato { font-size: 13px; font-weight: 600; }
+
+.scanner-esterno-box {
+  padding: 16px;
+  border-radius: 12px;
+  background: #111;
+  color: #fff;
+  text-align: center;
+}
+
+.scanner-icona { font-size: 42px; margin-bottom: 8px; }
+.scanner-esterno-testo { font-size: 14px; line-height: 1.45; }
+
+.scanner-comandi {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.scanner-button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.scanner-messaggio { margin-top: 9px; font-size: 13px; min-height: 20px; }
+
+
+
+/* SCANNER NATIVO GITHUB PAGES */
+.scanner-integrato { position: fixed; inset: 0; z-index: 99999; display: none; flex-direction: column; background: #000; }
+.scanner-integrato.aperto { display: flex; }
+.scanner-integrato-header { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px; background:#111; color:#fff; }
+.scanner-integrato-title { font-weight:700; }
+.scanner-integrato-close { border:0; border-radius:8px; padding:9px 12px; cursor:pointer; font-weight:700; }
+.scanner-camera-wrap { position:relative; flex:1; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#000; }
+#cameraVideo { width:100%; height:100%; object-fit:cover; }
+.scanner-mirino-github { position:absolute; width:min(72vw,420px); height:min(42vw,220px); border:3px solid #fff; border-radius:14px; box-shadow:0 0 0 9999px rgba(0,0,0,.18); pointer-events:none; }
+.scanner-integrato-footer { padding:12px 14px calc(12px + env(safe-area-inset-bottom)); background:#111; color:#fff; }
+#scannerIntegratoStato,#scannerIntegratoEsito { min-height:20px; margin-bottom:8px; }
+.scanner-integrato-actions { display:flex; gap:8px; }
+.scanner-integrato-actions button { flex:1; border:0; border-radius:9px; padding:12px; font-weight:700; cursor:pointer; }
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- =====================================================
+       INTESTAZIONE
+       ===================================================== -->
+
+  <div class="header">
+
+    <h1>
+      Gestione Vendite
+    </h1>
+
+    <div class="header-buttons">
+
+      <button
+        type="button"
+        class="header-button"
+        onclick="apriReportEvento()"
+      >
+        📊 REPORT EVENTO
+      </button>
+
+      <button
+        type="button"
+        class="header-button"
+        onclick="nuovaVendita()"
+      >
+        ➕ NUOVA VENDITA
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <!-- =====================================================
+         REPORT EVENTO
+         ===================================================== -->
+
+    <div
+      id="reportEvento"
+      class="report"
+    >
+
+      <div class="report-titolo">
+        📊 Report Evento
+      </div>
+
+      <div class="report-selettore">
+
+        <label for="selettoreReportEvento">
+          Seleziona evento
+        </label>
+
+        <select
+          id="selettoreReportEvento"
+          onchange="caricaReportEventoSelezionato()"
+        >
+
+          <option value="">
+            Seleziona un evento...
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- ===================================================
+           PERIODO ANALISI
+           =================================================== -->
+
+      <div
+        id="reportPeriodo"
+        class="report-periodo"
+        style="display:none;"
+      >
+
+        <div class="report-periodo-campo">
+
+          <label for="reportDataDal">
+            Dal
+          </label>
+
+          <input
+            type="date"
+            id="reportDataDal"
+            onchange="cambiaPeriodoReport()"
+          >
+
+        </div>
+
+
+        <div class="report-periodo-campo">
+
+          <label for="reportDataAl">
+            Al
+          </label>
+
+          <input
+            type="date"
+            id="reportDataAl"
+            onchange="cambiaPeriodoReport()"
+          >
+
+        </div>
+
+      </div>
+
+
+      <div id="contenutoReportEvento">
+
+        <div
+          class="report-campo"
+          style="margin-top:10px;"
+        >
+          <span class="report-label">
+            Seleziona un evento per visualizzare il report
+          </span>
+        </div>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="chiudi-report"
+        onclick="chiudiReportEvento()"
+      >
+        CHIUDI REPORT
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         RICERCA ARTICOLO
+         ===================================================== -->
+
+    <label for="ricerca">
+      Cerca articolo
+    </label>
+
+    <input
+      type="text"
+      id="ricerca"
+      placeholder="Inserisci codice o descrizione..."
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+      inputmode="search"
+    >
+
+
+    <!-- =====================================================
+         SCANNER BARCODE ESTERNO
+         ===================================================== -->
+
+    <div class="scanner-box">
+
+      <div class="scanner-header">
+        <div class="scanner-titolo">📷 Scanner barcode</div>
+        <div id="scannerStato" class="scanner-stato">Pronto</div>
+      </div>
+
+      <div class="scanner-esterno-box">
+        <div class="scanner-icona">📷</div>
+        <div class="scanner-esterno-testo">
+          La fotocamera viene utilizzata direttamente da questa pagina GitHub Pages.
+        </div>
+
+        <div class="scanner-comandi">
+          <button
+            type="button"
+            id="scannerAvvia"
+            class="scanner-button"
+            onclick="apriScannerIntegrato()"
+          >
+            📷 AVVIA FOTOCAMERA
+          </button>
+        </div>
+      </div>
+
+      <div id="scannerMessaggio" class="scanner-messaggio">
+        Premi AVVIA SCANNER e inquadra il codice a barre.
+      </div>
+
+    </div>
+
+    <!-- =====================================================
+         ARTICOLI RAPIDI
+         ===================================================== -->
+
+    <div
+      id="articoliRapidi"
+      class="articoli-rapidi"
+    ></div>
+
+
+    <!-- =====================================================
+         RISULTATI RICERCA
+         ===================================================== -->
+
+    <div
+      id="risultati"
+      class="risultati"
+    ></div>
+
+
+    <!-- =====================================================
+         ARTICOLO SELEZIONATO
+         ===================================================== -->
+
+    <div
+      id="articoloSelezionato"
+      style="display:none;"
+    >
+
+      <div class="prezzo">
+
+        <div class="prezzo-consigliato">
+          Prezzo vendita consigliato
+        </div>
+
+        <div
+          id="prezzoConsigliato"
+          class="prezzo-finale"
+        >
+          € 0,00
+        </div>
+
+        <div style="margin-top:10px;">
+          Prezzo finale vendita
+        </div>
+
+        <div
+          id="prezzoFinale"
+          class="prezzo-finale"
+        >
+          € 0,00
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           PREZZO
+           ===================================================== -->
+
+      <label>
+        Prezzo di vendita
+      </label>
+
+      <div class="opzioni">
+
+        <div
+          class="opzione selezionata"
+          onclick="selezionaPrezzo('consigliato', this)"
+        >
+          Prezzo consigliato
+        </div>
+
+        <div
+          class="opzione"
+          onclick="selezionaPrezzo('30', this)"
+        >
+          Sconto 30%
+        </div>
+
+        <div
+          class="opzione"
+          onclick="selezionaPrezzo('50', this)"
+        >
+          Sconto 50%
+        </div>
+
+        <div
+          class="opzione"
+          onclick="selezionaPrezzo('libero', this)"
+        >
+          Prezzo deciso
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           PREZZO PERSONALIZZATO
+           ===================================================== -->
+
+      <div
+        id="campoPersonalizzato"
+        class="personalizzato"
+      >
+
+        <label for="prezzoPersonalizzato">
+          Inserisci il prezzo di vendita
+        </label>
+
+        <input
+          type="number"
+          id="prezzoPersonalizzato"
+          min="0"
+          step="0.01"
+          placeholder="Es. 73,00"
+        >
+
+      </div>
+
+
+      <!-- =====================================================
+           PAGAMENTO
+           ===================================================== -->
+
+      <label>
+        Metodo di pagamento
+      </label>
+
+      <div class="pagamenti">
+
+        <div
+          class="pagamento"
+          onclick="selezionaPagamento('Contanti', this)"
+        >
+          💶 Contanti
+        </div>
+
+        <div
+          class="pagamento"
+          onclick="selezionaPagamento('POS', this)"
+        >
+          💳 POS
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           LUOGO
+           ===================================================== -->
+
+      <label for="luogoVendita">
+        Luogo della vendita
+      </label>
+
+      <select
+        id="luogoVendita"
+      >
+
+        <option value="">
+          Seleziona il luogo...
+        </option>
+
+      </select>
+
+
+      <!-- =====================================================
+           EVENTO ASSOCIATO
+           ===================================================== -->
+
+      <div
+        id="evento"
+        class="evento"
+      >
+
+        <div class="evento-titolo">
+          📅 Evento associato
+        </div>
+
+        <div class="evento-dati">
+
+          <div class="evento-campo">
+
+            <span class="evento-label">
+              Data inizio
+            </span>
+
+            <span
+              id="eventoDataInizio"
+              class="evento-valore"
+            >
+              -
+            </span>
+
+          </div>
+
+          <div class="evento-campo">
+
+            <span class="evento-label">
+              Data fine
+            </span>
+
+            <span
+              id="eventoDataFine"
+              class="evento-valore"
+            >
+              -
+            </span>
+
+          </div>
+
+          <div class="evento-campo">
+
+            <span class="evento-label">
+              Giorni
+            </span>
+
+            <span
+              id="eventoGiorni"
+              class="evento-valore"
+            >
+              -
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="eventoNessuno"
+        class="evento-nessuno"
+      >
+        ⚠️ Per questo luogo non sono state impostate
+        le date dell'evento.
+      </div>
+
+
+      <!-- =====================================================
+           REGISTRA
+           ===================================================== -->
+
+      <button
+        id="pulsanteRegistra"
+        class="registra"
+        onclick="registraVendita()"
+        disabled
+      >
+        REGISTRA VENDITA
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         MESSAGGI
+         ===================================================== -->
+
+    <div
+      id="messaggio"
+      class="messaggio"
+    ></div>
+
+  </div>
+
+</div>
+
+
+
+
+<div id="scannerIntegrato" class="scanner-integrato" aria-hidden="true">
+  <div class="scanner-integrato-header">
+    <div class="scanner-integrato-title">📷 Scanner barcode</div>
+    <button type="button" class="scanner-integrato-close" onclick="chiudiScannerIntegrato()">✕ CHIUDI</button>
+  </div>
+  <div class="scanner-camera-wrap">
+    <video id="cameraVideo" autoplay muted playsinline></video>
+    <div class="scanner-mirino-github"></div>
+  </div>
+  <div class="scanner-integrato-footer">
+    <div id="scannerIntegratoStato">Premi AVVIA FOTOCAMERA</div>
+    <div id="scannerIntegratoEsito"></div>
+    <div class="scanner-integrato-actions">
+      <button id="scannerCameraStart" type="button" onclick="avviaScannerIntegrato()">📷 AVVIA</button>
+      <button id="scannerCameraStop" type="button" onclick="fermaScannerIntegrato()" disabled>⏹ STOP</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@zxing/browser@0.1.5/umd/index.min.js"></script>
+<script>
+
+  // =====================================================
+  // API GITHUB PAGES -> APPS SCRIPT
+  // =====================================================
+  const API_URL = "https://script.google.com/macros/s/AKfycbw0oz_k-DyJLd1OrkW9DXISrHJKxlUwO-9hGN1jiS0bR5-cdgzb3rCkme5vpdI7uKL5Nw/exec";
+  const API_TIMEOUT_MS = 20000;
+
+  function apiCall(action, params) {
+    return new Promise(function(resolve, reject) {
+      const callbackName = "__apiCb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+      const script = document.createElement("script");
+      let timer = null;
+      function cleanup() { if (timer) clearTimeout(timer); delete window[callbackName]; if (script.parentNode) script.parentNode.removeChild(script); }
+      window[callbackName] = function(payload) { cleanup(); if (payload && payload.ok === false) { reject(new Error(payload.errore || payload.error || "Errore API")); return; } resolve(payload ? payload.data : null); };
+      const query = new URLSearchParams(); query.set("action", action); query.set("callback", callbackName);
+      Object.keys(params || {}).forEach(function(key) { const value=params[key]; if(value!==undefined && value!==null) query.set(key, typeof value === "string" ? value : JSON.stringify(value)); });
+      script.onerror=function(){ cleanup(); reject(new Error("Impossibile raggiungere il backend Apps Script.")); };
+      timer=setTimeout(function(){ cleanup(); reject(new Error("Timeout collegamento al backend Apps Script.")); }, API_TIMEOUT_MS);
+      script.src=API_URL+"?"+query.toString(); document.head.appendChild(script);
+    });
   }
 
-  function trovaArticoloPerCodice(codice) {
+  // Compatibilita con il codice esistente che usa google.script.run
+  (function(){
+    let successHandler=null, failureHandler=null;
+    const runner = new Proxy({}, { get: function(target, prop) {
+      if(prop === "withSuccessHandler") return function(fn){ successHandler=fn; return runner; };
+      if(prop === "withFailureHandler") return function(fn){ failureHandler=fn; return runner; };
+      return function(){
+        const args=Array.prototype.slice.call(arguments);
+        let params={};
+        if(prop === "getEventoLuogo") params={idEvento:args[0]||""};
+        else if(prop === "registraVendita") params={data:args[0]||{}};
+        else if(prop === "getReportEvento") params={idEvento:args[0]||"",dataDal:args[1]||"",dataAl:args[2]||""};
+        apiCall(String(prop),params).then(function(data){ const fn=successHandler; successHandler=null; failureHandler=null; if(fn) fn(data); }).catch(function(err){ const fn=failureHandler; successHandler=null; failureHandler=null; if(fn) fn(err); });
+      };
+    }});
+    window.google = {script:{run:runner}};
+  })();
 
-    const codiceNormalizzato =
-      normalizzaCodiceBarcode(codice);
+  // =====================================================
+  // VARIABILI GLOBALI
+  // =====================================================
 
-    if (!codiceNormalizzato || !Array.isArray(articoli)) {
-      return null;
-    }
+  let articoliRapidi = [];
 
-    return articoli.find(function(articolo) {
+  let articoli = [];
 
-      const valori = [
-        articolo.codice,
-        articolo.ean,
-        articolo.barcode,
-        articolo.codiceBarre,
-        articolo.codice_barre
-      ];
+  let articoloScelto = null;
 
-      return valori.some(function(valore) {
-        return (
-          normalizzaCodiceBarcode(valore) ===
-          codiceNormalizzato
-        );
-      });
-    }) || null;
+  let tipoPrezzo = "consigliato";
+
+  let pagamento = null;
+
+  let luogoVendita = null;
+
+  let eventiDisponibili = [];
+
+  let idEventoReportSelezionato = "";
+
+  let timerReport = null;
+
+  // Dati dell'ultima sezione del report.
+  let venditePerCategoriaReport = [];
+
+
+
+  // =====================================================
+  // SCANNER BARCODE NATIVO
+  // =====================================================
+  let ultimoBarcodeLetto = "";
+  let ultimoBarcodeTimestamp = 0;
+  const BLOCCO_DUPLICATO_MS = 1800;
+  let scannerReader = null;
+  let scannerControls = null;
+  let scannerStream = null;
+
+  function apriScannerIntegrato() {
+    const box=document.getElementById("scannerIntegrato");
+    if(!box) return;
+    box.classList.add("aperto"); box.setAttribute("aria-hidden","false");
+    setEsitoScannerIntegrato(""); setStatoScannerIntegrato("Richiesta accesso alla fotocamera...");
+    avviaScannerIntegrato();
   }
-
-  function gestisciBarcodeLetto(codice) {
-
-    const codicePulito =
-      String(codice || "").trim();
-
-    if (!codicePulito) return;
-
-    const adesso = Date.now();
-
-    if (
-      normalizzaCodiceBarcode(codicePulito) ===
-        normalizzaCodiceBarcode(ultimoBarcodeLetto) &&
-      adesso - ultimoBarcodeTimestamp < BLOCCO_DUPLICATO_MS
-    ) {
-      return;
-    }
-
-    ultimoBarcodeLetto = codicePulito;
-    ultimoBarcodeTimestamp = adesso;
-
-    const articolo =
-      trovaArticoloPerCodice(codicePulito);
-
-    if (articolo) {
-
-      aggiornaStatoScanner(
-        "Articolo trovato",
-        "ok"
-      );
-
-      mostraEsitoScanner(
-        "Barcode letto: " + codicePulito,
-        "ok"
-      );
-
-      selezionaArticolo(articolo);
-      return;
-    }
-
-    aggiornaStatoScanner(
-      "Barcode non trovato",
-      "errore"
-    );
-
-    mostraEsitoScanner(
-      "Barcode letto ma non presente negli articoli: " +
-        codicePulito,
-      "errore"
-    );
-
-    const ricerca =
-      document.getElementById("ricerca");
-
-    if (ricerca) {
-      ricerca.value = codicePulito;
-      ricerca.focus();
-      cercaArticoli();
-    }
+  function setStatoScannerIntegrato(testo){ const e=document.getElementById("scannerIntegratoStato"); if(e)e.textContent=testo; }
+  function setEsitoScannerIntegrato(testo){ const e=document.getElementById("scannerIntegratoEsito"); if(e)e.textContent=testo; }
+  function normalizzaCodiceBarcode(codice){ return String(codice||"").trim().replace(/\s+/g,"").toLowerCase(); }
+  function trovaArticoloPerCodice(codice){
+    const n=normalizzaCodiceBarcode(codice); if(!n || !Array.isArray(articoli)) return null;
+    return articoli.find(function(a){ return [a.codice,a.ean,a.barcode,a.codiceBarre,a.codice_barre].some(function(v){return normalizzaCodiceBarcode(v)===n;}); })||null;
   }
-
-  function aggiornaStatoScanner(testo, tipo) {
-
-    const stato =
-      document.getElementById("scannerStato");
-
-    if (!stato) return;
-
-    stato.textContent = testo;
-    stato.className =
-      "scanner-stato scanner-stato-" +
-      (tipo || "attesa");
+  function gestisciBarcodeLetto(codice){
+    const pulito=String(codice||"").trim(); if(!pulito)return; const now=Date.now();
+    if(normalizzaCodiceBarcode(pulito)===normalizzaCodiceBarcode(ultimoBarcodeLetto) && now-ultimoBarcodeTimestamp<BLOCCO_DUPLICATO_MS)return;
+    ultimoBarcodeLetto=pulito; ultimoBarcodeTimestamp=now;
+    const articolo=trovaArticoloPerCodice(pulito);
+    if(articolo){ setStatoScannerIntegrato("Articolo trovato ✓"); setEsitoScannerIntegrato("Barcode: "+pulito); if(typeof selezionaArticolo === "function") selezionaArticolo(articolo); return; }
+    setStatoScannerIntegrato("Barcode non trovato"); setEsitoScannerIntegrato("Non presente negli articoli: "+pulito);
+    const ricerca=document.getElementById("ricerca"); if(ricerca){ricerca.value=pulito; if(typeof cercaArticoli === "function") cercaArticoli();}
   }
-
-  function mostraEsitoScanner(testo, tipo) {
-
-    const messaggio =
-      document.getElementById("scannerMessaggio");
-
-    if (!messaggio) return;
-
-    messaggio.textContent = testo;
-    messaggio.className =
-      "scanner-messaggio scanner-messaggio-" +
-      (tipo || "attesa");
+  async function avviaScannerIntegrato(){
+    const video=document.getElementById("cameraVideo"); if(!video) return;
+    try{
+      if(scannerReader){ fermaScannerIntegrato(); }
+      if(!window.ZXingBrowser || !window.ZXingBrowser.BrowserMultiFormatReader) throw new Error("Libreria scanner non disponibile.");
+      scannerReader=new ZXingBrowser.BrowserMultiFormatReader();
+      setStatoScannerIntegrato("Avvio fotocamera...");
+      scannerControls=await scannerReader.decodeFromConstraints({video:{facingMode:{ideal:"environment"}},audio:false}, video, function(result){ if(result){ const text=typeof result.getText === "function" ? result.getText() : result.text; gestisciBarcodeLetto(text); } });
+      document.getElementById("scannerCameraStart").disabled=true; document.getElementById("scannerCameraStop").disabled=false; setStatoScannerIntegrato("Inquadratura barcode...");
+    }catch(err){ console.error(err); setStatoScannerIntegrato("Errore fotocamera"); setEsitoScannerIntegrato(err.message||String(err)); }
   }
-function avviaScannerAutomaticamente() { /* Scanner avviato solo dopo il click. */ }
-
+  function fermaScannerIntegrato(){
+    try{ if(scannerControls && typeof scannerControls.stop === "function") scannerControls.stop(); }catch(e){}
+    scannerControls=null;
+    try{ if(scannerReader && typeof scannerReader.reset === "function") scannerReader.reset(); }catch(e){}
+    scannerReader=null;
+    const video=document.getElementById("cameraVideo"); if(video && video.srcObject){ video.srcObject.getTracks().forEach(function(t){t.stop();}); video.srcObject=null; }
+    const st=document.getElementById("scannerCameraStart"),sp=document.getElementById("scannerCameraStop"); if(st)st.disabled=false; if(sp)sp.disabled=true;
+  }
+  function chiudiScannerIntegrato(){ fermaScannerIntegrato(); const box=document.getElementById("scannerIntegrato"); if(box){box.classList.remove("aperto");box.setAttribute("aria-hidden","true");} }
 
   // =====================================================
   // AVVIO
@@ -4009,532 +4564,6 @@ function escapeHtml(
 
 })();
 
-</script>
-
-
-<!-- SCANNER CAMERA NATIVO: funziona perché questa pagina è ospitata su GitHub Pages -->
-<div id="scannerIntegrato" class="scanner-integrato" aria-hidden="true">
-  <div class="scanner-integrato-header">
-    <div class="scanner-integrato-title">📷 Scanner barcode</div>
-    <button type="button" class="scanner-integrato-close" onclick="chiudiScannerIntegrato()">✕ CHIUDI</button>
-  </div>
-
-  <div class="scanner-camera-wrap">
-    <video id="cameraVideo" autoplay muted playsinline></video>
-    <div class="scanner-mirino-github"></div>
-  </div>
-
-  <div class="scanner-integrato-footer">
-    <div id="scannerIntegratoStato">Premi AVVIA FOTOCAMERA</div>
-    <div id="scannerIntegratoEsito"></div>
-    <div class="scanner-integrato-actions">
-      <button id="scannerCameraStart" type="button" onclick="avviaScannerIntegrato()">📷 AVVIA</button>
-      <button id="scannerCameraStop" type="button" onclick="fermaScannerIntegrato()" disabled>⏹ STOP</button>
-    </div>
-  </div>
-</div>
-
-
-<script src="https://unpkg.com/@zxing/browser@0.1.5/umd/index.min.js"></script>
-<script>
-/* =====================================================
-   CONFIGURAZIONE BACKEND APPS SCRIPT
-   ===================================================== */
-const API_URL = "https://script.google.com/macros/s/AKfycbw0oz_k-DyJLd1OrkW9DXISrHJKxlUwO-9hGN1jiS0bR5-cdgzb3rCkme5vpdI7uKL5Nw/exec";
-const API_TIMEOUT_MS = 20000;
-
-/*
- * L'API usa JSONP per evitare i problemi CORS del browser.
- * Il backend Apps Script dovrà rispondere a:
- *   ?api=1&action=getArticoli&callback=...
- *   ?api=1&action=getLuoghi&callback=...
- *   ?api=1&action=getArticoliRapidi&callback=...
- *   ?api=1&action=getEventoLuogo&idEvento=...&callback=...
- *   ?api=1&action=getEventi&callback=...
- *   ?api=1&action=getReportEvento&idEvento=...&dataDal=...&dataAl=...&callback=...
- *   ?api=1&action=registraVendita&data=<JSON>&callback=...
- */
-function apiCall(action, params) {
-  return new Promise(function(resolve, reject) {
-    if (!API_URL || API_URL.indexOf("INCOLLA_QUI") === 0) {
-      reject(new Error("Configura API_URL con l'URL della Web App Apps Script."));
-      return;
-    }
-
-    const callbackName = "__apiCb_" + Date.now() + "_" +
-      Math.random().toString(36).slice(2);
-
-    const script = document.createElement("script");
-    let timer = null;
-
-    function cleanup() {
-      if (timer) clearTimeout(timer);
-      delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[callbackName] = function(payload) {
-      cleanup();
-      if (payload && payload.ok === false) {
-        reject(new Error(payload.error || "Errore API"));
-        return;
-      }
-      resolve(payload ? payload.data : null);
-    };
-
-    const query = new URLSearchParams();
-    query.set("api", "1");
-    query.set("action", action);
-    query.set("callback", callbackName);
-
-    Object.keys(params || {}).forEach(function(key) {
-      const value = params[key];
-      if (value !== undefined && value !== null) {
-        query.set(key, typeof value === "string" ? value : JSON.stringify(value));
-      }
-    });
-
-    script.onerror = function() {
-      cleanup();
-      reject(new Error("Impossibile raggiungere il backend Apps Script."));
-    };
-
-    timer = setTimeout(function() {
-      cleanup();
-      reject(new Error("Timeout collegamento al backend Apps Script."));
-    }, API_TIMEOUT_MS);
-
-    script.src = API_URL + (API_URL.indexOf("?") >= 0 ? "&" : "?") + query.toString();
-    document.head.appendChild(script);
-  });
-}
-
-/* =====================================================
-   SCANNER NATIVO
-   ===================================================== */
-let scannerReaderIntegrato = null;
-let scannerStreamIntegrato = null;
-let scannerAttivoIntegrato = false;
-let ultimoBarcodeIntegrato = "";
-let ultimoBarcodeIntegratoTimestamp = 0;
-const BLOCCO_DUPLICATO_INTEGRATO_MS = 1800;
-
-function setStatoScannerIntegrato(testo) {
-  const el = document.getElementById("scannerIntegratoStato");
-  if (el) el.textContent = testo;
-}
-
-function setEsitoScannerIntegrato(testo) {
-  const el = document.getElementById("scannerIntegratoEsito");
-  if (el) el.textContent = testo;
-}
-
-function apriScannerIntegrato() {
-  const overlay = document.getElementById("scannerIntegrato");
-  if (!overlay) return;
-
-  overlay.classList.add("aperto");
-  overlay.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-
-  setEsitoScannerIntegrato("");
-  setStatoScannerIntegrato("Avvio fotocamera...");
-  avviaScannerIntegrato();
-}
-
-async function avviaScannerIntegrato() {
-  if (scannerAttivoIntegrato) return;
-
-  const video = document.getElementById("cameraVideo");
-  const start = document.getElementById("scannerCameraStart");
-  const stop = document.getElementById("scannerCameraStop");
-
-  try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error("Il browser non supporta l'accesso alla fotocamera.");
-    }
-
-    scannerAttivoIntegrato = true;
-    start.disabled = true;
-    stop.disabled = false;
-    setStatoScannerIntegrato("Richiesta accesso alla fotocamera...");
-
-    scannerStreamIntegrato = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        facingMode: { ideal: "environment" },
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
-    });
-
-    video.srcObject = scannerStreamIntegrato;
-    await video.play();
-
-    setStatoScannerIntegrato("Fotocamera attiva — inquadra il barcode");
-
-    scannerReaderIntegrato = new ZXingBrowser.BrowserMultiFormatReader();
-
-    await scannerReaderIntegrato.decodeFromVideoElement(
-      video,
-      function(result, error) {
-        if (!scannerAttivoIntegrato || !result) return;
-
-        const codice = result.getText
-          ? result.getText()
-          : String(result.text || result);
-
-        gestisciBarcodeLetto(codice);
-
-        // Una lettura riuscita chiude lo scanner e libera la camera.
-        fermaScannerIntegrato();
-        chiudiScannerIntegrato();
-      }
-    );
-
-  } catch (errore) {
-    console.error("Errore fotocamera:", errore);
-    scannerAttivoIntegrato = false;
-    start.disabled = false;
-    stop.disabled = true;
-
-    if (errore && errore.name === "NotAllowedError") {
-      setStatoScannerIntegrato("Permesso fotocamera negato");
-      setEsitoScannerIntegrato("Consenti la fotocamera nelle autorizzazioni del browser.");
-    } else if (errore && errore.name === "NotFoundError") {
-      setStatoScannerIntegrato("Fotocamera non trovata");
-      setEsitoScannerIntegrato("Nessuna fotocamera disponibile.");
-    } else {
-      setStatoScannerIntegrato("Errore fotocamera");
-      setEsitoScannerIntegrato(errore && errore.message ? errore.message : String(errore));
-    }
-  }
-}
-
-function fermaScannerIntegrato() {
-  scannerAttivoIntegrato = false;
-
-  try {
-    if (scannerReaderIntegrato && typeof scannerReaderIntegrato.reset === "function") {
-      scannerReaderIntegrato.reset();
-    }
-  } catch (e) {
-    console.warn("Reset ZXing:", e);
-  }
-
-  scannerReaderIntegrato = null;
-
-  if (scannerStreamIntegrato) {
-    scannerStreamIntegrato.getTracks().forEach(function(track) {
-      try { track.stop(); } catch (e) {}
-    });
-    scannerStreamIntegrato = null;
-  }
-
-  const video = document.getElementById("cameraVideo");
-  if (video) video.srcObject = null;
-
-  const start = document.getElementById("scannerCameraStart");
-  const stop = document.getElementById("scannerCameraStop");
-  if (start) start.disabled = false;
-  if (stop) stop.disabled = true;
-
-  setStatoScannerIntegrato("Scanner fermato");
-}
-
-function chiudiScannerIntegrato() {
-  fermaScannerIntegrato();
-
-  const overlay = document.getElementById("scannerIntegrato");
-  if (overlay) {
-    overlay.classList.remove("aperto");
-    overlay.setAttribute("aria-hidden", "true");
-  }
-
-  document.body.style.overflow = "";
-}
-
-/* =====================================================
-   SOVRASCRITTURA FUNZIONI BACKEND DEL FRONTEND
-   ===================================================== */
-
-function caricaArticoli() {
-  apiCall("getArticoli")
-    .then(function(dati) {
-      articoli = Array.isArray(dati) ? dati : [];
-      mostraArticoliRapidi();
-    })
-    .catch(function(errore) {
-      console.error("Errore caricamento articoli:", errore);
-      mostraMessaggio("Errore nel caricamento degli articoli: " + errore.message, "errore");
-    });
-}
-
-function caricaLuoghi() {
-  apiCall("getLuoghi")
-    .then(function(luoghi) {
-      const select = document.getElementById("luogoVendita");
-      if (!select) return;
-
-      select.innerHTML = '<option value="">Seleziona il luogo...</option>';
-
-      if (!Array.isArray(luoghi)) return;
-
-      luoghi.forEach(function(luogo) {
-        const option = document.createElement("option");
-
-        if (typeof luogo === "object" && luogo !== null) {
-          const idEvento = luogo.idEvento || luogo.id || "";
-          option.value = String(idEvento).trim();
-          option.textContent = costruisciNomeEvento(luogo);
-          option.dataset.idEvento = String(idEvento).trim();
-          option.dataset.luogo = String(luogo.luogo || "").trim();
-          option.dataset.dataInizio = luogo.dataInizio || "";
-          option.dataset.dataFine = luogo.dataFine || "";
-        } else {
-          option.value = String(luogo);
-          option.textContent = String(luogo);
-          option.dataset.luogo = String(luogo);
-        }
-
-        select.appendChild(option);
-      });
-
-      const ultimoLuogo = localStorage.getItem("ultimoLuogoVendita");
-      if (ultimoLuogo) {
-        const trovata = Array.from(select.options).find(function(option) {
-          return option.value === ultimoLuogo;
-        });
-
-        if (trovata) {
-          select.value = trovata.value;
-          luogoVendita = trovata.value;
-          caricaEventoSelezionatoDalMenu(trovata);
-        }
-      }
-
-      aggiornaPulsante();
-    })
-    .catch(function(errore) {
-      console.error("Errore caricamento luoghi:", errore);
-      mostraMessaggio("Errore nel caricamento dei luoghi: " + errore.message, "errore");
-    });
-}
-
-function caricaArticoliRapidi() {
-  apiCall("getArticoliRapidi")
-    .then(function(codici) {
-      articoliRapidi = Array.isArray(codici) ? codici : [];
-      mostraArticoliRapidi();
-    })
-    .catch(function(errore) {
-      console.error("Errore articoli rapidi:", errore);
-    });
-}
-
-function caricaEventoSelezionatoDalMenu(option) {
-  const luogo = option.dataset.luogo || option.textContent || option.value;
-  const idEvento = option.dataset.idEvento || option.value;
-
-  if (!luogo) {
-    nascondiEvento();
-    return;
-  }
-
-  if (option.dataset.dataInizio && option.dataset.dataFine) {
-    mostraEvento({
-      dataInizio: option.dataset.dataInizio,
-      dataFine: option.dataset.dataFine,
-      giorni: calcolaGiorni(option.dataset.dataInizio, option.dataset.dataFine)
-    });
-    return;
-  }
-
-  apiCall("getEventoLuogo", { idEvento: idEvento })
-    .then(function(evento) {
-      if (!evento) {
-        nascondiEvento();
-        return;
-      }
-      mostraEvento(evento);
-    })
-    .catch(function(errore) {
-      console.error("Errore caricamento evento:", errore);
-      nascondiEvento();
-    });
-}
-
-function caricaListaEventiReport() {
-  const select = document.getElementById("selettoreReportEvento");
-  if (!select) return;
-
-  select.innerHTML = '<option value="">Caricamento eventi...</option>';
-
-  apiCall("getEventi")
-    .then(function(eventi) {
-      eventiDisponibili = Array.isArray(eventi) ? eventi : [];
-
-      select.innerHTML = '<option value="">Seleziona un evento...</option>';
-
-      if (!eventiDisponibili.length) {
-        select.innerHTML = '<option value="">Nessun evento disponibile</option>';
-        nascondiPeriodoReport();
-        document.getElementById("contenutoReportEvento").innerHTML =
-          '<div class="report-campo"><span class="report-label">Nessun evento disponibile.</span></div>';
-        return;
-      }
-
-      eventiDisponibili.forEach(function(evento) {
-        if (!evento) return;
-
-        const option = document.createElement("option");
-        const idEvento = evento.idEvento || evento.id || "";
-        const luogo = evento.luogo || "";
-
-        option.value = String(idEvento);
-        option.textContent = costruisciNomeEvento(evento);
-        option.dataset.idEvento = String(idEvento);
-        option.dataset.dataInizio = evento.dataInizio || "";
-        option.dataset.dataFine = evento.dataFine || "";
-        option.dataset.luogo = luogo;
-
-        select.appendChild(option);
-      });
-
-      // Mantiene la logica già presente nel file per l'evento predefinito.
-      const idPredefinito = typeof getIdEventoReportPredefinito === "function"
-        ? getIdEventoReportPredefinito()
-        : "";
-
-      if (idPredefinito) {
-        select.value = idPredefinito;
-        idEventoReportSelezionato = idPredefinito;
-        inizializzaPeriodoReport();
-        caricaReportEventoSelezionato();
-      }
-    })
-    .catch(function(errore) {
-      console.error("ERRORE getEventi():", errore);
-      select.innerHTML = '<option value="">Errore caricamento eventi</option>';
-      nascondiPeriodoReport();
-    });
-}
-
-function caricaReportEventoSelezionato() {
-  const select = document.getElementById("selettoreReportEvento");
-  const contenitore = document.getElementById("contenutoReportEvento");
-  if (!select || !contenitore) return;
-
-  const idEvento = select.value;
-  idEventoReportSelezionato = idEvento;
-
-  if (!idEvento) {
-    nascondiPeriodoReport();
-    contenitore.innerHTML =
-      '<div class="report-campo"><span class="report-label">Seleziona un evento per visualizzare il report</span></div>';
-    return;
-  }
-
-  mostraPeriodoReport();
-
-  const dataDal = document.getElementById("reportDataDal").value;
-  const dataAl = document.getElementById("reportDataAl").value;
-
-  if (!dataDal || !dataAl) return;
-
-  if (dataAl < dataDal) {
-    contenitore.innerHTML =
-      '<div class="report-campo"><span class="report-label" style="color:#c5221f;">Intervallo date non valido.</span></div>';
-    return;
-  }
-
-  contenitore.innerHTML =
-    '<div class="report-campo"><span class="report-label">Caricamento report...</span></div>';
-
-  apiCall("getReportEvento", {
-    idEvento: idEvento,
-    dataDal: dataDal,
-    dataAl: dataAl
-  })
-    .then(function(dati) {
-      if (!dati) {
-        contenitore.innerHTML =
-          '<div class="report-campo"><span class="report-label">Report non disponibile.</span></div>';
-        return;
-      }
-      mostraReportEvento(dati);
-    })
-    .catch(function(errore) {
-      console.error("Errore caricamento report:", errore);
-      contenitore.innerHTML =
-        '<div class="report-campo"><span class="report-label" style="color:#c5221f;">Errore nel caricamento del report.</span></div>';
-    });
-}
-
-function registraVendita() {
-  // Mantiene integralmente la validazione/calcolo già presente:
-  // ricreiamo i dati con la stessa struttura usata dal backend esistente.
-  if (!articoloScelto || !pagamento || !luogoVendita) {
-    mostraMessaggio("Seleziona articolo, pagamento e luogo.", "errore");
-    return;
-  }
-
-  const idEvento = getIdEventoReale();
-  if (!idEvento) {
-    mostraMessaggio("Evento non selezionato. Seleziona nuovamente il luogo/evento.", "errore");
-    return;
-  }
-
-  let prezzoFinale = 0;
-
-  if (tipoPrezzo === "consigliato") {
-    prezzoFinale = Number(articoloScelto.prezzo);
-  } else if (tipoPrezzo === "30") {
-    prezzoFinale = Number(articoloScelto.prezzo) * 0.70;
-  } else if (tipoPrezzo === "50") {
-    prezzoFinale = Number(articoloScelto.prezzo) * 0.50;
-  } else if (tipoPrezzo === "libero") {
-    prezzoFinale = Number(document.getElementById("prezzoPersonalizzato").value);
-  }
-
-  if (!Number.isFinite(prezzoFinale) || prezzoFinale < 0) {
-    mostraMessaggio("Prezzo di vendita non valido.", "errore");
-    return;
-  }
-
-  const dati = {
-    codice: articoloScelto.codice,
-    descrizione: articoloScelto.descrizione,
-    prezzoConsigliato: Number(articoloScelto.prezzo),
-    prezzoAcquisto: Number(articoloScelto.prezzoAcquisto) || 0,
-    tipoPrezzo: getNomeTipoPrezzo(),
-    prezzoApplicato: prezzoFinale,
-    pagamento: pagamento,
-    luogo: getLuogoReale(),
-    idEvento: idEvento,
-    categoria: articoloScelto.categoria || ""
-  };
-
-  const pulsante = document.getElementById("pulsanteRegistra");
-  if (pulsante) {
-    pulsante.disabled = true;
-    pulsante.innerText = "REGISTRAZIONE...";
-  }
-
-  apiCall("registraVendita", { data: dati })
-    .then(function() {
-      mostraMessaggio("✓ Vendita registrata correttamente!", "successo");
-      nuovaVendita();
-    })
-    .catch(function(errore) {
-      console.error("Errore registrazione vendita:", errore);
-      mostraMessaggio("Errore: " + errore.message, "errore");
-      if (pulsante) {
-        pulsante.disabled = false;
-        pulsante.innerText = "REGISTRA VENDITA";
-      }
-    });
-}
 </script>
 
 </body>
