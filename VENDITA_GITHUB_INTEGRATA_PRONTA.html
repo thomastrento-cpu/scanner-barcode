@@ -1,0 +1,4542 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f3f4;
+      margin: 0;
+      padding: 20px;
+      color: #202124;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .header {
+      background: #1a73e8;
+      color: white;
+      padding: 18px;
+      border-radius: 12px 12px 0 0;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .header-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .header-button {
+      border: none;
+      border-radius: 9px;
+      padding: 13px 10px;
+      background: white;
+      color: #1a73e8;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .header-button:hover {
+      background: #e8f0fe;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 18px;
+      margin-bottom: 7px;
+    }
+
+    input,
+    button,
+    select {
+      font-size: 18px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      background: white;
+    }
+
+    select {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .risultati {
+      margin-top: 8px;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      background: white;
+      overflow: hidden;
+    }
+
+    .risultato {
+      padding: 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+
+    .risultato:last-child {
+      border-bottom: none;
+    }
+
+    .risultato:hover {
+      background: #f1f3f4;
+    }
+
+    .codice {
+      font-weight: bold;
+      color: #1a73e8;
+    }
+
+    .descrizione {
+      margin-top: 3px;
+    }
+
+    .prezzo {
+      margin-top: 20px;
+      padding: 18px;
+      background: #e8f0fe;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .prezzo-consigliato {
+      font-size: 18px;
+      color: #5f6368;
+    }
+
+    .prezzo-finale {
+      font-size: 32px;
+      font-weight: bold;
+      color: #137333;
+      margin-top: 8px;
+    }
+
+    .opzioni {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .opzione {
+      border: 2px solid #dadce0;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      background: white;
+      font-weight: bold;
+    }
+
+    .opzione.selezionata {
+      border-color: #1a73e8;
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+
+    .personalizzato {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .pagamenti {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .pagamento {
+      padding: 18px;
+      border: 2px solid #dadce0;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 19px;
+      font-weight: bold;
+      background: white;
+    }
+
+    .pagamento.selezionato {
+      border-color: #137333;
+      background: #e6f4ea;
+      color: #137333;
+    }
+
+    .registra {
+      width: 100%;
+      margin-top: 25px;
+      padding: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #1a73e8;
+      color: white;
+      font-size: 21px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .registra:hover {
+      background: #1557b0;
+    }
+
+    .registra:disabled {
+      background: #9aa0a6;
+      cursor: not-allowed;
+    }
+
+    .messaggio {
+      margin-top: 15px;
+      padding: 14px;
+      border-radius: 8px;
+      display: none;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .successo {
+      background: #e6f4ea;
+      color: #137333;
+    }
+
+    .errore {
+      background: #fce8e6;
+      color: #c5221f;
+    }
+
+    /* =====================================================
+       ARTICOLI RAPIDI
+       ===================================================== */
+
+    .articoli-rapidi {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+      margin-bottom: 15px;
+    }
+
+    .articolo-rapido {
+      width: 100%;
+      padding: 12px 8px;
+      border: 2px solid #dadce0;
+      border-radius: 8px;
+      background: white;
+      color: #202124;
+      font-size: 15px;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+      min-height: 62px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.25;
+    }
+
+    .articolo-rapido:hover {
+      background: #f1f3f4;
+      border-color: #1a73e8;
+    }
+
+    .articolo-rapido:active {
+      background: #e8f0fe;
+      border-color: #1a73e8;
+    }
+
+    .rapido-codice {
+      color: #1a73e8;
+      font-weight: bold;
+    }
+
+    .rapido-descrizione {
+      margin-top: 4px;
+      font-size: 13px;
+      color: #202124;
+      font-weight: normal;
+    }
+
+    /* =====================================================
+       EVENTO
+       ===================================================== */
+
+    .evento {
+      display: none;
+      margin-top: 12px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #e6f4ea;
+      border: 1px solid #b7dfc0;
+    }
+
+    .evento-titolo {
+      font-weight: bold;
+      color: #137333;
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .evento-dati {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .evento-campo {
+      background: white;
+      border-radius: 7px;
+      padding: 9px;
+      text-align: center;
+    }
+
+    .evento-label {
+      display: block;
+      font-size: 12px;
+      color: #5f6368;
+      margin-bottom: 3px;
+    }
+
+    .evento-valore {
+      font-weight: bold;
+      font-size: 16px;
+      color: #202124;
+    }
+
+    .evento-nessuno {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #fff4e5;
+      color: #b06000;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* =====================================================
+       REPORT EVENTO
+       ===================================================== */
+
+    .report {
+      display: none;
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 10px;
+      background: #f8f9fa;
+      border: 1px solid #dadce0;
+    }
+
+    .report-titolo {
+      font-size: 21px;
+      font-weight: bold;
+      color: #1a73e8;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .report-selettore {
+      margin-bottom: 10px;
+    }
+
+    .report-periodo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+      margin-bottom: 14px;
+    }
+
+    .report-periodo-campo {
+      background: white;
+      border-radius: 8px;
+      padding: 9px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .report-periodo-campo label {
+      margin: 0 0 5px 0;
+      font-size: 12px;
+      color: #5f6368;
+    }
+
+    .report-periodo-campo input {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .report-griglia {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .report-campo {
+      background: white;
+      border-radius: 7px;
+      padding: 11px;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+    }
+
+    .report-label {
+      display: block;
+      font-size: 12px;
+      color: #5f6368;
+      margin-bottom: 4px;
+    }
+
+    .report-valore {
+      font-weight: bold;
+      font-size: 17px;
+      color: #202124;
+    }
+
+    .report-sezione {
+      margin-top: 16px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #5f6368;
+      font-size: 15px;
+    }
+
+    .report-periodo-titolo {
+      margin-top: 2px;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #5f6368;
+      font-size: 13px;
+    }
+
+    .report-netto {
+      margin-top: 16px;
+      padding: 15px;
+      border-radius: 9px;
+      background: #e6f4ea;
+      border: 1px solid #b7dfc0;
+      text-align: center;
+    }
+
+    .report-netto-titolo {
+      font-size: 14px;
+      color: #5f6368;
+    }
+
+    .report-netto-valore {
+      font-size: 30px;
+      font-weight: bold;
+      color: #137333;
+      margin-top: 5px;
+    }
+
+    .report-netto-giorno-label {
+      margin-top: 9px;
+      font-size: 13px;
+      color: #5f6368;
+    }
+
+    .report-netto-giorno {
+      font-size: 20px;
+      font-weight: bold;
+      color: #137333;
+    }
+
+    /* =====================================================
+       VENDITE PER CATEGORIA
+       ===================================================== */
+
+    .report-categorie {
+      margin-top: 16px;
+      padding: 11px;
+      border-radius: 9px;
+      background: white;
+      border: 1px solid #dadce0;
+    }
+
+    .report-categorie-titolo {
+      font-size: 15px;
+      font-weight: bold;
+      color: #5f6368;
+      margin-bottom: 9px;
+    }
+
+    .report-categorie-ordinamento {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+
+    .report-categorie-ordinamento label {
+      margin: 0;
+      font-size: 12px;
+      color: #5f6368;
+      font-weight: bold;
+    }
+
+    .report-categorie-ordinamento select {
+      width: 100%;
+      padding: 7px 8px;
+      font-size: 14px;
+      border-radius: 7px;
+    }
+
+    .report-categorie-tabella {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 12px;
+    }
+
+    .report-categorie-tabella th {
+      padding: 7px 4px;
+      background: #f1f3f4;
+      color: #5f6368;
+      font-size: 11px;
+      font-weight: bold;
+      text-align: right;
+      border-bottom: 1px solid #dadce0;
+    }
+
+    .report-categorie-tabella th:first-child {
+      text-align: left;
+      width: 34%;
+    }
+
+    .report-categorie-tabella th:nth-child(2) {
+      width: 16%;
+    }
+
+    .report-categorie-tabella th:nth-child(3) {
+      width: 25%;
+    }
+
+    .report-categorie-tabella th:nth-child(4) {
+      width: 25%;
+    }
+
+    .report-categorie-tabella td {
+      padding: 7px 4px;
+      border-bottom: 1px solid #eeeeee;
+      text-align: right;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .report-categorie-tabella td:first-child {
+      text-align: left;
+      font-weight: bold;
+      color: #202124;
+    }
+
+    .report-categorie-tabella tr:last-child td {
+      border-bottom: none;
+    }
+
+    .report-categorie-vuoto {
+      padding: 9px 5px;
+      text-align: center;
+      color: #5f6368;
+      font-size: 12px;
+    }
+
+    .report-categorie-margine {
+      font-weight: bold;
+    }
+
+    .chiudi-report {
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #5f6368;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 500px) {
+
+      body {
+        padding: 8px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .header {
+        padding: 15px;
+      }
+
+      .header h1 {
+        font-size: 23px;
+      }
+
+      .header-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .opzioni {
+        grid-template-columns: 1fr;
+      }
+
+      .evento-dati {
+        grid-template-columns: 1fr;
+      }
+
+      .report-griglia {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .report-periodo {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .articoli-rapidi {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .report-categorie {
+        padding: 8px;
+      }
+
+      .report-categorie-tabella {
+        font-size: 11px;
+      }
+
+      .report-categorie-tabella th {
+        font-size: 10px;
+        padding: 6px 3px;
+      }
+
+      .report-categorie-tabella td {
+        padding: 6px 3px;
+      }
+
+    }
+
+    /* =====================================================
+       iOS
+       ===================================================== */
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+      font-size: 18px !important;
+      -webkit-text-size-adjust: 100%;
+    }
+  /* SCANNER BARCODE INTEGRATO */
+
+  function normalizzaCodiceBarcode(codice) {
+    return String(codice || "")
+      .trim()
+      .replace(/\s+/g, "")
+      .toLowerCase();
+  }
+
+  function trovaArticoloPerCodice(codice) {
+
+    const codiceNormalizzato =
+      normalizzaCodiceBarcode(codice);
+
+    if (!codiceNormalizzato || !Array.isArray(articoli)) {
+      return null;
+    }
+
+    return articoli.find(function(articolo) {
+
+      const valori = [
+        articolo.codice,
+        articolo.ean,
+        articolo.barcode,
+        articolo.codiceBarre,
+        articolo.codice_barre
+      ];
+
+      return valori.some(function(valore) {
+        return (
+          normalizzaCodiceBarcode(valore) ===
+          codiceNormalizzato
+        );
+      });
+    }) || null;
+  }
+
+  function gestisciBarcodeLetto(codice) {
+
+    const codicePulito =
+      String(codice || "").trim();
+
+    if (!codicePulito) return;
+
+    const adesso = Date.now();
+
+    if (
+      normalizzaCodiceBarcode(codicePulito) ===
+        normalizzaCodiceBarcode(ultimoBarcodeLetto) &&
+      adesso - ultimoBarcodeTimestamp < BLOCCO_DUPLICATO_MS
+    ) {
+      return;
+    }
+
+    ultimoBarcodeLetto = codicePulito;
+    ultimoBarcodeTimestamp = adesso;
+
+    const articolo =
+      trovaArticoloPerCodice(codicePulito);
+
+    if (articolo) {
+
+      aggiornaStatoScanner(
+        "Articolo trovato",
+        "ok"
+      );
+
+      mostraEsitoScanner(
+        "Barcode letto: " + codicePulito,
+        "ok"
+      );
+
+      selezionaArticolo(articolo);
+      return;
+    }
+
+    aggiornaStatoScanner(
+      "Barcode non trovato",
+      "errore"
+    );
+
+    mostraEsitoScanner(
+      "Barcode letto ma non presente negli articoli: " +
+        codicePulito,
+      "errore"
+    );
+
+    const ricerca =
+      document.getElementById("ricerca");
+
+    if (ricerca) {
+      ricerca.value = codicePulito;
+      ricerca.focus();
+      cercaArticoli();
+    }
+  }
+
+  function aggiornaStatoScanner(testo, tipo) {
+
+    const stato =
+      document.getElementById("scannerStato");
+
+    if (!stato) return;
+
+    stato.textContent = testo;
+    stato.className =
+      "scanner-stato scanner-stato-" +
+      (tipo || "attesa");
+  }
+
+  function mostraEsitoScanner(testo, tipo) {
+
+    const messaggio =
+      document.getElementById("scannerMessaggio");
+
+    if (!messaggio) return;
+
+    messaggio.textContent = testo;
+    messaggio.className =
+      "scanner-messaggio scanner-messaggio-" +
+      (tipo || "attesa");
+  }
+function avviaScannerAutomaticamente() { /* Scanner avviato solo dopo il click. */ }
+
+
+  // =====================================================
+  // AVVIO
+  // =====================================================
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+      caricaArticoli();
+      caricaLuoghi();
+      caricaArticoliRapidi();
+
+      avviaScannerAutomaticamente();
+
+    }
+  );
+
+
+  // =====================================================
+  // CARICA ARTICOLI
+  // =====================================================
+
+  function caricaArticoli() {
+
+    google.script.run
+
+      .withSuccessHandler(function(dati) {
+
+        articoli =
+          Array.isArray(dati)
+            ? dati
+            : [];
+
+        mostraArticoliRapidi();
+
+      })
+
+      .withFailureHandler(function(errore) {
+
+        console.error(
+          "Errore caricamento articoli:",
+          errore
+        );
+
+        mostraMessaggio(
+          "Errore nel caricamento degli articoli: " +
+          (
+            errore && errore.message
+              ? errore.message
+              : errore
+          ),
+          "errore"
+        );
+
+      })
+
+      .getArticoli();
+
+  }
+
+
+  // =====================================================
+  // CARICA LUOGHI
+  // =====================================================
+
+  function caricaLuoghi() {
+
+    google.script.run
+
+      .withSuccessHandler(function(luoghi) {
+
+        const select =
+          document.getElementById(
+            "luogoVendita"
+          );
+
+        select.innerHTML =
+          '<option value="">Seleziona il luogo...</option>';
+
+        if (!Array.isArray(luoghi)) {
+          return;
+        }
+
+        luoghi.forEach(function(luogo) {
+
+          const option =
+            document.createElement("option");
+
+          if (
+            typeof luogo === "object" &&
+            luogo !== null
+          ) {
+
+            const idEvento =
+              luogo.idEvento ||
+              luogo.id ||
+              "";
+
+            option.value =
+              String(idEvento).trim();
+
+            option.textContent =
+              costruisciNomeEvento(luogo);
+
+            option.dataset.idEvento =
+              String(idEvento).trim();
+
+            option.dataset.luogo =
+              String(luogo.luogo || "").trim();
+
+            option.dataset.dataInizio =
+              luogo.dataInizio || "";
+
+            option.dataset.dataFine =
+              luogo.dataFine || "";
+
+          } else {
+
+            option.value =
+              String(luogo);
+
+            option.textContent =
+              String(luogo);
+
+            option.dataset.luogo =
+              String(luogo);
+
+          }
+
+          select.appendChild(
+            option
+          );
+
+        });
+
+
+        const ultimoLuogo =
+          localStorage.getItem(
+            "ultimoLuogoVendita"
+          );
+
+        if (ultimoLuogo) {
+
+          const opzioni =
+            Array.from(
+              select.options
+            );
+
+          const trovata =
+            opzioni.find(function(option) {
+
+              return (
+                option.value ===
+                ultimoLuogo
+              );
+
+            });
+
+          if (trovata) {
+
+            select.value =
+              trovata.value;
+
+            luogoVendita =
+              trovata.value;
+
+            caricaEventoSelezionatoDalMenu(
+              trovata
+            );
+
+          }
+
+        }
+
+        aggiornaPulsante();
+
+      })
+
+      .withFailureHandler(function(errore) {
+
+        console.error(
+          "Errore caricamento luoghi:",
+          errore
+        );
+
+        mostraMessaggio(
+          "Errore nel caricamento dei luoghi: " +
+          (
+            errore && errore.message
+              ? errore.message
+              : errore
+          ),
+          "errore"
+        );
+
+      })
+
+      .getLuoghi();
+
+  }
+
+
+  // =====================================================
+  // OTTIENE ID EVENTO REALE
+  // =====================================================
+
+  function getIdEventoReale() {
+
+    const select =
+      document.getElementById(
+        "luogoVendita"
+      );
+
+    const option =
+      select.options[
+        select.selectedIndex
+      ];
+
+    if (!option) {
+      return "";
+    }
+
+    return String(
+      option.dataset.idEvento ||
+      option.value ||
+      ""
+    ).trim();
+
+  }
+
+
+  // =====================================================
+  // COSTRUISCE NOME EVENTO
+  // =====================================================
+
+  function costruisciNomeEvento(evento) {
+
+    const luogo =
+      evento.luogo ||
+      "";
+
+    const inizio =
+      evento.dataInizio ||
+      "";
+
+    const fine =
+      evento.dataFine ||
+      "";
+
+    if (inizio && fine) {
+
+      return (
+        luogo +
+        " | " +
+        inizio +
+        " - " +
+        fine
+      );
+
+    }
+
+    return luogo;
+
+  }
+
+
+  // =====================================================
+  // CARICAMENTO ARTICOLI RAPIDI
+  // =====================================================
+
+  function caricaArticoliRapidi() {
+
+    google.script.run
+
+      .withSuccessHandler(function(codici) {
+
+        articoliRapidi =
+          Array.isArray(codici)
+            ? codici
+            : [];
+
+        mostraArticoliRapidi();
+
+      })
+
+      .withFailureHandler(function(errore) {
+
+        console.error(
+          "Errore articoli rapidi:",
+          errore
+        );
+
+      })
+
+      .getArticoliRapidi();
+
+  }
+
+
+  // =====================================================
+  // MOSTRA ARTICOLI RAPIDI
+  // =====================================================
+
+  function mostraArticoliRapidi() {
+
+    const contenitore =
+      document.getElementById(
+        "articoliRapidi"
+      );
+
+    if (!contenitore) {
+      return;
+    }
+
+    contenitore.innerHTML = "";
+
+    if (
+      !articoliRapidi ||
+      articoliRapidi.length === 0
+    ) {
+      return;
+    }
+
+    articoliRapidi.forEach(function(codiceRapido) {
+
+      const codice =
+        String(codiceRapido)
+          .trim()
+          .toLowerCase();
+
+      const articolo =
+        articoli.find(function(item) {
+
+          return (
+            String(item.codice)
+              .trim()
+              .toLowerCase() ===
+            codice
+          );
+
+        });
+
+      if (!articolo) {
+        return;
+      }
+
+      const pulsante =
+        document.createElement("button");
+
+      pulsante.type =
+        "button";
+
+      pulsante.className =
+        "articolo-rapido";
+
+      const codiceDiv =
+        document.createElement("div");
+
+      codiceDiv.className =
+        "rapido-codice";
+
+      codiceDiv.textContent =
+        articolo.codice;
+
+      const descrizioneDiv =
+        document.createElement("div");
+
+      descrizioneDiv.className =
+        "rapido-descrizione";
+
+      descrizioneDiv.textContent =
+        articolo.descrizione;
+
+      pulsante.appendChild(
+        codiceDiv
+      );
+
+      pulsante.appendChild(
+        descrizioneDiv
+      );
+
+      pulsante.onclick =
+        function() {
+
+          selezionaArticolo(
+            articolo
+          );
+
+        };
+
+      contenitore.appendChild(
+        pulsante
+      );
+
+    });
+
+  }
+
+
+  // =====================================================
+  // RICERCA ARTICOLI
+  // =====================================================
+
+  document
+    .getElementById("ricerca")
+    .addEventListener(
+      "input",
+      cercaArticoli
+    );
+
+
+  function cercaArticoli() {
+
+    const testo =
+      document
+        .getElementById("ricerca")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const contenitore =
+      document.getElementById(
+        "risultati"
+      );
+
+    contenitore.innerHTML = "";
+
+    if (testo.length === 0) {
+      return;
+    }
+
+    const trovati =
+      articoli
+        .filter(function(articolo) {
+
+          return (
+
+            String(articolo.codice)
+              .toLowerCase()
+              .includes(testo)
+
+            ||
+
+            String(articolo.descrizione)
+              .toLowerCase()
+              .includes(testo)
+
+          );
+
+        })
+        .slice(0, 10);
+
+
+    trovati.forEach(function(articolo) {
+
+      const div =
+        document.createElement("div");
+
+      div.className =
+        "risultato";
+
+      div.innerHTML =
+
+        '<div class="codice">' +
+        escapeHtml(
+          articolo.codice
+        ) +
+        '</div>' +
+
+        '<div class="descrizione">' +
+        escapeHtml(
+          articolo.descrizione
+        ) +
+        '</div>' +
+
+        '<div>€ ' +
+        formattaNumero(
+          articolo.prezzo
+        ) +
+        '</div>';
+
+      div.onclick =
+        function() {
+
+          selezionaArticolo(
+            articolo
+          );
+
+        };
+
+      contenitore.appendChild(
+        div
+      );
+
+    });
+
+
+    if (trovati.length === 0) {
+
+      contenitore.innerHTML =
+        '<div class="risultato">' +
+        'Nessun articolo trovato' +
+        '</div>';
+
+    }
+
+  }
+
+
+  // =====================================================
+  // SELEZIONE ARTICOLO
+  // =====================================================
+
+  function selezionaArticolo(
+    articolo
+  ) {
+
+    articoloScelto =
+      articolo;
+
+    tipoPrezzo =
+      "consigliato";
+
+    pagamento =
+      null;
+
+    document
+      .getElementById("risultati")
+      .innerHTML = "";
+
+    document
+      .getElementById("ricerca")
+      .value =
+        articolo.codice +
+        " - " +
+        articolo.descrizione;
+
+    document
+      .getElementById(
+        "articoloSelezionato"
+      )
+      .style.display =
+        "block";
+
+    document
+      .getElementById(
+        "prezzoConsigliato"
+      )
+      .innerText =
+        "€ " +
+        formattaNumero(
+          articolo.prezzo
+        );
+
+    document
+      .getElementById(
+        "campoPersonalizzato"
+      )
+      .style.display =
+        "none";
+
+    document
+      .getElementById(
+        "prezzoPersonalizzato"
+      )
+      .value = "";
+
+    document
+      .querySelectorAll(".opzione")
+      .forEach(function(el) {
+
+        el.classList.remove(
+          "selezionata"
+        );
+
+      });
+
+    const primaOpzione =
+      document.querySelector(
+        ".opzione"
+      );
+
+    if (primaOpzione) {
+
+      primaOpzione.classList.add(
+        "selezionata"
+      );
+
+    }
+
+    document
+      .querySelectorAll(".pagamento")
+      .forEach(function(el) {
+
+        el.classList.remove(
+          "selezionato"
+        );
+
+      });
+
+    aggiornaPrezzoFinale();
+
+    aggiornaPulsante();
+
+  }
+
+
+  // =====================================================
+  // SELEZIONE PREZZO
+  // =====================================================
+
+  function selezionaPrezzo(
+    tipo,
+    elemento
+  ) {
+
+    tipoPrezzo =
+      tipo;
+
+    document
+      .querySelectorAll(".opzione")
+      .forEach(function(el) {
+
+        el.classList.remove(
+          "selezionata"
+        );
+
+      });
+
+    elemento.classList.add(
+      "selezionata"
+    );
+
+    const campo =
+      document.getElementById(
+        "campoPersonalizzato"
+      );
+
+    if (tipo === "libero") {
+
+      campo.style.display =
+        "block";
+
+      setTimeout(function() {
+
+        document
+          .getElementById(
+            "prezzoPersonalizzato"
+          )
+          .focus();
+
+      }, 100);
+
+    } else {
+
+      campo.style.display =
+        "none";
+
+    }
+
+    aggiornaPrezzoFinale();
+
+    aggiornaPulsante();
+
+  }
+
+
+  // =====================================================
+  // PREZZO FINALE
+  // =====================================================
+
+  function aggiornaPrezzoFinale() {
+
+    if (!articoloScelto) {
+      return;
+    }
+
+    let prezzo =
+      Number(
+        articoloScelto.prezzo
+      );
+
+    if (tipoPrezzo === "30") {
+
+      prezzo =
+        prezzo * 0.70;
+
+    }
+
+    if (tipoPrezzo === "50") {
+
+      prezzo =
+        prezzo * 0.50;
+
+    }
+
+    if (tipoPrezzo === "libero") {
+
+      const valore =
+        document
+          .getElementById(
+            "prezzoPersonalizzato"
+          )
+          .value;
+
+      if (valore !== "") {
+
+        prezzo =
+          Number(valore);
+
+      } else {
+
+        prezzo = 0;
+
+      }
+
+    }
+
+    document
+      .getElementById(
+        "prezzoFinale"
+      )
+      .innerText =
+        "€ " +
+        formattaNumero(prezzo);
+
+  }
+
+
+  document
+    .getElementById(
+      "prezzoPersonalizzato"
+    )
+    .addEventListener(
+      "input",
+      function() {
+
+        aggiornaPrezzoFinale();
+
+        aggiornaPulsante();
+
+      }
+    );
+
+
+  // =====================================================
+  // PAGAMENTO
+  // =====================================================
+
+  function selezionaPagamento(
+    tipo,
+    elemento
+  ) {
+
+    pagamento =
+      tipo;
+
+    document
+      .querySelectorAll(".pagamento")
+      .forEach(function(el) {
+
+        el.classList.remove(
+          "selezionato"
+        );
+
+      });
+
+    elemento.classList.add(
+      "selezionato"
+    );
+
+    aggiornaPulsante();
+
+  }
+
+
+  // =====================================================
+  // CAMBIO LUOGO
+  // =====================================================
+
+  document
+    .getElementById(
+      "luogoVendita"
+    )
+    .addEventListener(
+      "change",
+      function() {
+
+        const option =
+          this.options[
+            this.selectedIndex
+          ];
+
+        luogoVendita =
+          this.value;
+
+        if (luogoVendita) {
+
+          localStorage.setItem(
+            "ultimoLuogoVendita",
+            option.dataset.idEvento ||
+            luogoVendita
+          );
+
+          caricaEventoSelezionatoDalMenu(
+            option
+          );
+
+        } else {
+
+          nascondiEvento();
+
+        }
+
+        aggiornaPulsante();
+
+      }
+    );
+
+
+  // =====================================================
+  // CARICA EVENTO DAL MENU
+  // =====================================================
+
+  function caricaEventoSelezionatoDalMenu(
+    option
+  ) {
+
+    const luogo =
+      option.dataset.luogo ||
+      option.textContent ||
+      option.value;
+
+    const idEvento =
+      option.dataset.idEvento ||
+      option.value;
+
+    if (!luogo) {
+
+      nascondiEvento();
+
+      return;
+
+    }
+
+    if (
+      option.dataset.dataInizio &&
+      option.dataset.dataFine
+    ) {
+
+      mostraEvento(
+        {
+          dataInizio:
+            option.dataset.dataInizio,
+
+          dataFine:
+            option.dataset.dataFine,
+
+          giorni:
+            calcolaGiorni(
+              option.dataset.dataInizio,
+              option.dataset.dataFine
+            )
+        }
+      );
+
+      return;
+
+    }
+
+    google.script.run
+
+      .withSuccessHandler(
+        function(evento) {
+
+          if (!evento) {
+
+            nascondiEvento();
+
+            return;
+
+          }
+
+          mostraEvento(evento);
+
+        }
+      )
+
+      .withFailureHandler(
+        function(errore) {
+
+          console.error(
+            "Errore caricamento evento:",
+            errore
+          );
+
+          nascondiEvento();
+
+        }
+      )
+
+      .getEventoLuogo(
+        idEvento
+      );
+
+  }
+
+
+  // =====================================================
+  // MOSTRA EVENTO
+  // =====================================================
+
+  function mostraEvento(evento) {
+
+    if (!evento) {
+
+      nascondiEvento();
+
+      return;
+
+    }
+
+    document
+      .getElementById(
+        "eventoDataInizio"
+      )
+      .innerText =
+        evento.dataInizio || "-";
+
+    document
+      .getElementById(
+        "eventoDataFine"
+      )
+      .innerText =
+        evento.dataFine || "-";
+
+    let giorni =
+      Number(evento.giorni) || 0;
+
+    if (
+      giorni <= 0 &&
+      evento.dataInizio &&
+      evento.dataFine
+    ) {
+
+      giorni =
+        calcolaGiorni(
+          evento.dataInizio,
+          evento.dataFine
+        );
+
+    }
+
+    document
+      .getElementById(
+        "eventoGiorni"
+      )
+      .innerText =
+        giorni > 0
+          ? giorni
+          : "-";
+
+    document
+      .getElementById(
+        "evento"
+      )
+      .style.display =
+        "block";
+
+    document
+      .getElementById(
+        "eventoNessuno"
+      )
+      .style.display =
+        "none";
+
+  }
+
+
+  // =====================================================
+  // NASCONDI EVENTO
+  // =====================================================
+
+  function nascondiEvento() {
+
+    document
+      .getElementById(
+        "evento"
+      )
+      .style.display =
+        "none";
+
+    document
+      .getElementById(
+        "eventoNessuno"
+      )
+      .style.display =
+        "none";
+
+  }
+
+
+  // =====================================================
+  // CALCOLO GIORNI
+  // =====================================================
+
+  function calcolaGiorni(
+    dataInizio,
+    dataFine
+  ) {
+
+    if (
+      !dataInizio ||
+      !dataFine
+    ) {
+      return 0;
+    }
+
+    const partiInizio =
+      String(dataInizio).split("/");
+
+    const partiFine =
+      String(dataFine).split("/");
+
+    if (
+      partiInizio.length !== 3 ||
+      partiFine.length !== 3
+    ) {
+      return 0;
+    }
+
+    const inizio =
+      new Date(
+        Number(partiInizio[2]),
+        Number(partiInizio[1]) - 1,
+        Number(partiInizio[0])
+      );
+
+    const fine =
+      new Date(
+        Number(partiFine[2]),
+        Number(partiFine[1]) - 1,
+        Number(partiFine[0])
+      );
+
+    const differenza =
+      fine.getTime() -
+      inizio.getTime();
+
+    return (
+      Math.floor(
+        differenza /
+        (1000 * 60 * 60 * 24)
+      ) + 1
+    );
+
+  }
+
+
+  // =====================================================
+  // PULSANTE REGISTRA
+  // =====================================================
+
+  function aggiornaPulsante() {
+
+    const pulsante =
+      document.getElementById(
+        "pulsanteRegistra"
+      );
+
+    if (!pulsante) {
+      return;
+    }
+
+    let prezzoValido =
+      false;
+
+    if (
+      tipoPrezzo !== "libero"
+    ) {
+
+      prezzoValido =
+        true;
+
+    } else {
+
+      const valore =
+        document
+          .getElementById(
+            "prezzoPersonalizzato"
+          )
+          .value;
+
+      prezzoValido =
+        valore !== "" &&
+        Number(valore) >= 0;
+
+    }
+
+    pulsante.disabled =
+      !articoloScelto ||
+      !pagamento ||
+      !luogoVendita ||
+      !prezzoValido;
+
+  }
+
+
+// =====================================================
+// REGISTRA VENDITA
+// =====================================================
+
+function registraVendita() {
+
+  if (
+    !articoloScelto ||
+    !pagamento ||
+    !luogoVendita
+  ) {
+
+    mostraMessaggio(
+      "Seleziona articolo, pagamento e luogo.",
+      "errore"
+    );
+
+    return;
+  }
+
+  const idEvento =
+    getIdEventoReale();
+
+  if (!idEvento) {
+
+    mostraMessaggio(
+      "Evento non selezionato. Seleziona nuovamente il luogo/evento.",
+      "errore"
+    );
+
+    return;
+  }
+
+  let prezzoFinale = 0;
+
+  if (tipoPrezzo === "consigliato") {
+
+    prezzoFinale =
+      Number(
+        articoloScelto.prezzo
+      );
+
+  }
+
+  else if (tipoPrezzo === "30") {
+
+    prezzoFinale =
+      Number(
+        articoloScelto.prezzo
+      ) * 0.70;
+
+  }
+
+  else if (tipoPrezzo === "50") {
+
+    prezzoFinale =
+      Number(
+        articoloScelto.prezzo
+      ) * 0.50;
+
+  }
+
+  else if (tipoPrezzo === "libero") {
+
+    prezzoFinale =
+      Number(
+        document
+          .getElementById(
+            "prezzoPersonalizzato"
+          )
+          .value
+      );
+
+  }
+
+  if (
+    !Number.isFinite(prezzoFinale) ||
+    prezzoFinale < 0
+  ) {
+
+    mostraMessaggio(
+      "Prezzo di vendita non valido.",
+      "errore"
+    );
+
+    return;
+  }
+
+  const dati = {
+
+    codice:
+      articoloScelto.codice,
+
+    descrizione:
+      articoloScelto.descrizione,
+
+    prezzoConsigliato:
+      Number(
+        articoloScelto.prezzo
+      ),
+
+    prezzoAcquisto:
+      Number(
+        articoloScelto.prezzoAcquisto
+      ) || 0,
+
+    tipoPrezzo:
+      getNomeTipoPrezzo(),
+
+    prezzoApplicato:
+      prezzoFinale,
+
+    pagamento:
+      pagamento,
+
+    luogo:
+      getLuogoReale(),
+
+    idEvento:
+      idEvento,
+
+    // =================================================
+    // NUOVO: CATEGORIA
+    // =================================================
+
+    categoria:
+      articoloScelto.categoria || ""
+
+  };
+
+  const pulsante =
+    document.getElementById(
+      "pulsanteRegistra"
+    );
+
+  pulsante.disabled =
+    true;
+
+  pulsante.innerText =
+    "REGISTRAZIONE...";
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(risultato) {
+
+        mostraMessaggio(
+          "✓ Vendita registrata correttamente!",
+          "successo"
+        );
+
+        nuovaVendita();
+
+      }
+    )
+
+    .withFailureHandler(
+      function(errore) {
+
+        console.error(
+          "Errore registrazione vendita:",
+          errore
+        );
+
+        mostraMessaggio(
+          "Errore: " +
+          (
+            errore && errore.message
+              ? errore.message
+              : errore
+          ),
+          "errore"
+        );
+
+        pulsante.disabled =
+          false;
+
+        pulsante.innerText =
+          "REGISTRA VENDITA";
+
+      }
+    )
+
+    .registraVendita(
+      dati
+    );
+
+}
+
+
+// =====================================================
+// OTTIENE IL NOME REALE DEL LUOGO
+// =====================================================
+
+function getLuogoReale() {
+
+  const select =
+    document.getElementById(
+      "luogoVendita"
+    );
+
+  const option =
+    select.options[
+      select.selectedIndex
+    ];
+
+  if (
+    option &&
+    option.dataset.luogo
+  ) {
+
+    return option.dataset.luogo;
+
+  }
+
+  return luogoVendita || "";
+
+}
+
+
+// =====================================================
+// NOME TIPO PREZZO
+// =====================================================
+
+function getNomeTipoPrezzo() {
+
+  if (
+    tipoPrezzo ===
+    "consigliato"
+  ) {
+    return "Prezzo consigliato";
+  }
+
+  if (
+    tipoPrezzo === "30"
+  ) {
+    return "Sconto 30%";
+  }
+
+  if (
+    tipoPrezzo === "50"
+  ) {
+    return "Sconto 50%";
+  }
+
+  if (
+    tipoPrezzo === "libero"
+  ) {
+    return "Prezzo deciso";
+  }
+
+  return "";
+
+}
+
+
+// =====================================================
+// NUOVA VENDITA
+// =====================================================
+
+function nuovaVendita() {
+
+  articoloScelto =
+    null;
+
+  pagamento =
+    null;
+
+  tipoPrezzo =
+    "consigliato";
+
+  document
+    .getElementById(
+      "ricerca"
+    )
+    .value = "";
+
+  document
+    .getElementById(
+      "risultati"
+    )
+    .innerHTML = "";
+
+  document
+    .getElementById(
+      "articoloSelezionato"
+    )
+    .style.display =
+      "none";
+
+  document
+    .getElementById(
+      "prezzoPersonalizzato"
+    )
+    .value = "";
+
+  document
+    .querySelectorAll(
+      ".pagamento"
+    )
+    .forEach(function(el) {
+
+      el.classList.remove(
+        "selezionato"
+      );
+
+    });
+
+  document
+    .getElementById(
+      "pulsanteRegistra"
+    )
+    .disabled =
+      true;
+
+  document
+    .getElementById(
+      "pulsanteRegistra"
+    )
+    .innerText =
+      "REGISTRA VENDITA";
+
+  nascondiEvento();
+
+}
+
+
+// =====================================================
+// REPORT EVENTO - APERTURA
+// =====================================================
+
+function apriReportEvento() {
+
+  const report =
+    document.getElementById(
+      "reportEvento"
+    );
+
+  report.style.display =
+    "block";
+
+  report.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+  caricaListaEventiReport();
+
+}
+
+
+// =====================================================
+// REPORT EVENTO - CHIUSURA
+// =====================================================
+
+function chiudiReportEvento() {
+
+  document
+    .getElementById(
+      "reportEvento"
+    )
+    .style.display =
+      "none";
+
+  idEventoReportSelezionato =
+    "";
+
+  venditePerCategoriaReport =
+    [];
+
+  if (timerReport) {
+
+    clearTimeout(
+      timerReport
+    );
+
+    timerReport =
+      null;
+
+  }
+
+}
+
+
+// =====================================================
+// DATA ODIERNA IN FORMATO YYYY-MM-DD
+// =====================================================
+
+function getDataOggiISO() {
+
+  const oggi =
+    new Date();
+
+  return (
+    String(
+      oggi.getFullYear()
+    ) +
+    "-" +
+    String(
+      oggi.getMonth() + 1
+    ).padStart(2, "0") +
+    "-" +
+    String(
+      oggi.getDate()
+    ).padStart(2, "0")
+  );
+
+}
+
+
+// =====================================================
+// DATA EVENTO IN FORMATO YYYY-MM-DD
+// =====================================================
+
+function convertiDataEventoISO(
+  data
+) {
+
+  if (!data) {
+    return "";
+  }
+
+  const parti =
+    String(data).split("/");
+
+  if (parti.length !== 3) {
+    return "";
+  }
+
+  return (
+    parti[2] +
+    "-" +
+    parti[1].padStart(2, "0") +
+    "-" +
+    parti[0].padStart(2, "0")
+  );
+
+}
+
+
+// =====================================================
+// CONFRONTO DATE ISO
+// =====================================================
+
+function dataISOInIntervallo(
+  data,
+  inizio,
+  fine
+) {
+
+  if (
+    !data ||
+    !inizio ||
+    !fine
+  ) {
+    return false;
+  }
+
+  return (
+    data >= inizio &&
+    data <= fine
+  );
+
+}
+
+
+// =====================================================
+// SELEZIONE AUTOMATICA EVENTO
+// =====================================================
+
+function trovaEventoPredefinitoReport(
+  eventi
+) {
+
+  if (
+    !Array.isArray(eventi) ||
+    eventi.length === 0
+  ) {
+    return null;
+  }
+
+  const oggi =
+    getDataOggiISO();
+
+  let eventoInCorso =
+    null;
+
+  let ultimoTerminato =
+    null;
+
+  eventi.forEach(function(evento) {
+
+    if (!evento) {
+      return;
+    }
+
+    const inizio =
+      convertiDataEventoISO(
+        evento.dataInizio
+      );
+
+    const fine =
+      convertiDataEventoISO(
+        evento.dataFine
+      );
+
+    if (
+      !inizio ||
+      !fine
+    ) {
+      return;
+    }
+
+    if (
+      dataISOInIntervallo(
+        oggi,
+        inizio,
+        fine
+      )
+    ) {
+
+      if (
+        !eventoInCorso ||
+        fine >
+        convertiDataEventoISO(
+          eventoInCorso.dataFine
+        )
+      ) {
+
+        eventoInCorso =
+          evento;
+
+      }
+
+      return;
+
+    }
+
+    if (
+      fine < oggi
+    ) {
+
+      if (
+        !ultimoTerminato ||
+        fine >
+        convertiDataEventoISO(
+          ultimoTerminato.dataFine
+        )
+      ) {
+
+        ultimoTerminato =
+          evento;
+
+      }
+
+    }
+
+  });
+
+  return (
+    eventoInCorso ||
+    ultimoTerminato ||
+    null
+  );
+
+}
+
+
+// =====================================================
+// CARICA LISTA EVENTI
+// =====================================================
+
+function caricaListaEventiReport() {
+
+  const select =
+    document.getElementById(
+      "selettoreReportEvento"
+    );
+
+  if (!select) {
+    return;
+  }
+
+  select.innerHTML =
+    '<option value="">Caricamento eventi...</option>';
+
+  google.script.run
+
+    .withSuccessHandler(function(eventi) {
+
+      eventiDisponibili =
+        Array.isArray(eventi)
+          ? eventi
+          : [];
+
+      select.innerHTML =
+        '<option value="">Seleziona un evento...</option>';
+
+      if (
+        eventiDisponibili.length === 0
+      ) {
+
+        select.innerHTML =
+          '<option value="">Nessun evento disponibile</option>';
+
+        nascondiPeriodoReport();
+
+        document
+          .getElementById(
+            "contenutoReportEvento"
+          )
+          .innerHTML =
+            '<div class="report-campo">' +
+            '<span class="report-label">' +
+            'Nessun evento disponibile.' +
+            '</span>' +
+            '</div>';
+
+        return;
+
+      }
+
+      eventiDisponibili.forEach(function(evento) {
+
+        if (!evento) {
+          return;
+        }
+
+        const option =
+          document.createElement("option");
+
+        const idEvento =
+          evento.idEvento ||
+          evento.id ||
+          "";
+
+        const luogo =
+          evento.luogo ||
+          "";
+
+        const dataInizio =
+          evento.dataInizio ||
+          "";
+
+        const dataFine =
+          evento.dataFine ||
+          "";
+
+        option.value =
+          String(idEvento);
+
+        option.textContent =
+          (
+            idEvento ||
+            "Evento"
+          ) +
+          " | " +
+          luogo +
+          " | " +
+          dataInizio +
+          " - " +
+          dataFine;
+
+        select.appendChild(
+          option
+        );
+
+      });
+
+      const eventoPredefinito =
+        trovaEventoPredefinitoReport(
+          eventiDisponibili
+        );
+
+      if (eventoPredefinito) {
+
+        const idPredefinito =
+          String(
+            eventoPredefinito.idEvento ||
+            eventoPredefinito.id ||
+            ""
+          );
+
+        if (idPredefinito) {
+
+          select.value =
+            idPredefinito;
+
+          idEventoReportSelezionato =
+            idPredefinito;
+
+          inizializzaPeriodoReport();
+
+          caricaReportEventoSelezionato();
+
+        }
+
+      }
+
+    })
+
+    .withFailureHandler(function(errore) {
+
+      console.error(
+        "ERRORE getEventi():",
+        errore
+      );
+
+      select.innerHTML =
+        '<option value="">Errore caricamento eventi</option>';
+
+      nascondiPeriodoReport();
+
+      document
+        .getElementById(
+          "contenutoReportEvento"
+        )
+        .innerHTML =
+          '<div class="report-campo">' +
+          '<span class="report-label" style="color:#c5221f;">' +
+          'Errore nel caricamento del report.' +
+          '</span>' +
+          '</div>';
+
+      mostraMessaggio(
+        "Errore nel caricamento degli eventi: " +
+        (
+          errore && errore.message
+            ? errore.message
+            : errore
+        ),
+        "errore"
+      );
+
+    })
+
+    .getEventi();
+
+}
+
+
+// =====================================================
+// IMPOSTA LIMITI PERIODO REPORT
+// =====================================================
+
+function impostaLimitiPeriodoReport(idEvento) {
+
+  const dal =
+    document.getElementById(
+      "reportDataDal"
+    );
+
+  const al =
+    document.getElementById(
+      "reportDataAl"
+    );
+
+  if (!dal || !al || !idEvento) {
+    return;
+  }
+
+  const evento =
+    eventiDisponibili.find(
+      function(e) {
+
+        return String(
+          e.idEvento ||
+          e.id ||
+          ""
+        ).trim() === String(
+          idEvento
+        ).trim();
+
+      }
+    );
+
+  if (!evento) {
+    return;
+  }
+
+  const dataInizio =
+    convertiDataEventoISO(
+      evento.dataInizio
+    );
+
+  const dataFine =
+    convertiDataEventoISO(
+      evento.dataFine
+    );
+
+  if (!dataInizio || !dataFine) {
+    return;
+  }
+
+  dal.min =
+    dataInizio;
+
+  dal.max =
+    dataFine;
+
+  al.min =
+    dataInizio;
+
+  al.max =
+    dataFine;
+
+}
+
+
+// =====================================================
+// INIZIALIZZA PERIODO REPORT
+// =====================================================
+
+function inizializzaPeriodoReport() {
+
+  const dal =
+    document.getElementById(
+      "reportDataDal"
+    );
+
+  const al =
+    document.getElementById(
+      "reportDataAl"
+    );
+
+  if (!dal || !al) {
+    return;
+  }
+
+  const evento =
+    eventiDisponibili.find(
+      function(e) {
+
+        return String(
+          e.idEvento ||
+          e.id ||
+          ""
+        ).trim() === String(
+          idEventoReportSelezionato
+        ).trim();
+
+      }
+    );
+
+  if (!evento) {
+    return;
+  }
+
+  const dataInizio =
+    convertiDataEventoISO(
+      evento.dataInizio
+    );
+
+  const dataFine =
+    convertiDataEventoISO(
+      evento.dataFine
+    );
+
+  if (!dataInizio || !dataFine) {
+    return;
+  }
+
+  dal.min =
+    dataInizio;
+
+  dal.max =
+    dataFine;
+
+  al.min =
+    dataInizio;
+
+  al.max =
+    dataFine;
+
+  const oggi =
+    getDataOggiISO();
+
+  let dataDefault =
+    oggi;
+
+  if (oggi < dataInizio) {
+    dataDefault =
+      dataInizio;
+  }
+
+  if (oggi > dataFine) {
+    dataDefault =
+      dataFine;
+  }
+
+  dal.value =
+    dataDefault;
+
+  al.value =
+    dataDefault;
+
+  document
+    .getElementById(
+      "reportPeriodo"
+    )
+    .style.display =
+      "grid";
+
+}
+
+
+// =====================================================
+// NASCONDE PERIODO REPORT
+// =====================================================
+
+function nascondiPeriodoReport() {
+
+  const periodo =
+    document.getElementById(
+      "reportPeriodo"
+    );
+
+  if (periodo) {
+
+    periodo.style.display =
+      "none";
+
+  }
+
+}
+
+
+// =====================================================
+// CAMBIO PERIODO REPORT
+// =====================================================
+
+function cambiaPeriodoReport() {
+
+  const dal =
+    document.getElementById(
+      "reportDataDal"
+    );
+
+  const al =
+    document.getElementById(
+      "reportDataAl"
+    );
+
+  if (!dal || !al) {
+    return;
+  }
+
+  if (
+    !dal.value ||
+    !al.value
+  ) {
+    return;
+  }
+
+  const evento =
+    eventiDisponibili.find(
+      function(e) {
+
+        return String(
+          e.idEvento ||
+          e.id ||
+          ""
+        ).trim() === String(
+          idEventoReportSelezionato
+        ).trim();
+
+      }
+    );
+
+  if (evento) {
+
+    const dataInizio =
+      convertiDataEventoISO(
+        evento.dataInizio
+      );
+
+    const dataFine =
+      convertiDataEventoISO(
+        evento.dataFine
+      );
+
+    if (
+      dal.value < dataInizio ||
+      dal.value > dataFine ||
+      al.value < dataInizio ||
+      al.value > dataFine
+    ) {
+
+      mostraMessaggio(
+        "Le date del report devono essere comprese nelle date dell'evento.",
+        "errore"
+      );
+
+      return;
+    }
+
+  }
+
+  if (al.value < dal.value) {
+
+    mostraMessaggio(
+      "La data 'Al' non può essere precedente alla data 'Dal'.",
+      "errore"
+    );
+
+    return;
+
+  }
+
+  if (!idEventoReportSelezionato) {
+    return;
+  }
+
+  caricaReportEventoSelezionato();
+
+}
+
+
+// =====================================================
+// NOME EVENTO REPORT
+// =====================================================
+
+function costruisciNomeEventoReport(evento) {
+
+  const id =
+    evento.idEvento ||
+    "Evento";
+
+  const luogo =
+    evento.luogo ||
+    "";
+
+  const dataInizio =
+    evento.dataInizio ||
+    "";
+
+  const dataFine =
+    evento.dataFine ||
+    "";
+
+  return (
+    id +
+    " | " +
+    luogo +
+    " | " +
+    dataInizio +
+    " - " +
+    dataFine
+  );
+
+}
+
+
+// =====================================================
+// CARICA REPORT EVENTO SELEZIONATO
+// =====================================================
+
+function caricaReportEventoSelezionato() {
+
+  const select =
+    document.getElementById(
+      "selettoreReportEvento"
+    );
+
+  const contenitore =
+    document.getElementById(
+      "contenutoReportEvento"
+    );
+
+  if (!select || !contenitore) {
+    return;
+  }
+
+  const idEvento =
+    String(
+      select.value || ""
+    ).trim();
+
+  const eventoCambiato =
+    idEvento !==
+    String(
+      idEventoReportSelezionato || ""
+    ).trim();
+
+  idEventoReportSelezionato =
+    idEvento;
+
+  if (!idEvento) {
+
+    nascondiPeriodoReport();
+
+    venditePerCategoriaReport =
+      [];
+
+    contenitore.innerHTML =
+      '<div class="report-campo">' +
+      '<span class="report-label">' +
+      'Seleziona un evento per visualizzare il report' +
+      '</span>' +
+      '</div>';
+
+    return;
+
+  }
+
+  impostaLimitiPeriodoReport(
+    idEvento
+  );
+
+  if (eventoCambiato) {
+
+    inizializzaPeriodoReport();
+
+  }
+
+  const campoDal =
+    document.getElementById(
+      "reportDataDal"
+    );
+
+  const campoAl =
+    document.getElementById(
+      "reportDataAl"
+    );
+
+  if (!campoDal || !campoAl) {
+    return;
+  }
+
+  if (
+    !campoDal.value ||
+    !campoAl.value
+  ) {
+
+    inizializzaPeriodoReport();
+
+  }
+
+  const dataDal =
+    campoDal.value;
+
+  const dataAl =
+    campoAl.value;
+
+  if (
+    !dataDal ||
+    !dataAl
+  ) {
+    return;
+  }
+
+  const evento =
+    eventiDisponibili.find(
+      function(e) {
+
+        return String(
+          e.idEvento ||
+          e.id ||
+          ""
+        ).trim() === String(
+          idEvento
+        ).trim();
+
+      }
+    );
+
+  if (!evento) {
+    return;
+  }
+
+  const dataInizio =
+    convertiDataEventoISO(
+      evento.dataInizio
+    );
+
+  const dataFine =
+    convertiDataEventoISO(
+      evento.dataFine
+    );
+
+  if (
+    !dataInizio ||
+    !dataFine
+  ) {
+    return;
+  }
+
+  if (
+    dataDal < dataInizio ||
+    dataDal > dataFine ||
+    dataAl < dataInizio ||
+    dataAl > dataFine
+  ) {
+
+    mostraMessaggio(
+      "Le date del report devono essere comprese nelle date dell'evento.",
+      "errore"
+    );
+
+    let dataDefault =
+      getDataOggiISO();
+
+    if (dataDefault < dataInizio) {
+      dataDefault =
+        dataInizio;
+    }
+
+    if (dataDefault > dataFine) {
+      dataDefault =
+        dataFine;
+    }
+
+    campoDal.value =
+      dataDefault;
+
+    campoAl.value =
+      dataDefault;
+
+    return;
+
+  }
+
+  if (dataAl < dataDal) {
+
+    contenitore.innerHTML =
+      '<div class="report-campo">' +
+      '<span class="report-label" style="color:#c5221f;">' +
+      'Intervallo date non valido.' +
+      '</span>' +
+      '</div>';
+
+    return;
+
+  }
+
+  contenitore.innerHTML =
+    '<div class="report-campo">' +
+    '<span class="report-label">' +
+    'Caricamento report...' +
+    '</span>' +
+    '</div>';
+
+  google.script.run
+
+    .withSuccessHandler(function(dati) {
+
+      if (!dati) {
+
+        contenitore.innerHTML =
+          '<div class="report-campo">' +
+          '<span class="report-label">' +
+          'Report non disponibile.' +
+          '</span>' +
+          '</div>';
+
+        return;
+
+      }
+
+      mostraReportEvento(
+        dati
+      );
+
+    })
+
+    .withFailureHandler(function(errore) {
+
+      console.error(
+        "Errore caricamento report:",
+        errore
+      );
+
+      contenitore.innerHTML =
+        '<div class="report-campo">' +
+        '<span class="report-label" style="color:#c5221f;">' +
+        escapeHtml(
+          errore && errore.message
+            ? errore.message
+            : "Errore nel caricamento del report."
+        ) +
+        '</span>' +
+        '</div>';
+
+    })
+
+    .getReportEvento(
+      idEvento,
+      dataDal,
+      dataAl
+    );
+
+}
+
+
+// =====================================================
+// MOSTRA REPORT EVENTO
+// =====================================================
+
+function mostraReportEvento(
+  dati
+) {
+
+  const contenitore =
+    document.getElementById(
+      "contenutoReportEvento"
+    );
+
+  // ===================================================
+  // SALVA DATI CATEGORIE
+  // ===================================================
+
+  venditePerCategoriaReport =
+    Array.isArray(
+      dati.venditePerCategoria
+    )
+      ? dati.venditePerCategoria
+      : [];
+
+  const periodoTesto =
+    formattaPeriodoReport(
+      dati.dataAnalisiDal,
+      dati.dataAnalisiAl
+    );
+
+  contenitore.innerHTML =
+
+    // =================================================
+    // DATI INTERO EVENTO
+    // =================================================
+
+    '<div class="report-griglia">' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">ID Evento</span>' +
+        '<span class="report-valore">' +
+          escapeHtml(
+            dati.idEvento || "-"
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Luogo</span>' +
+        '<span class="report-valore">' +
+          escapeHtml(
+            dati.luogo || "-"
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Data inizio</span>' +
+        '<span class="report-valore">' +
+          escapeHtml(
+            dati.dataInizio || "-"
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Data fine</span>' +
+        '<span class="report-valore">' +
+          escapeHtml(
+            dati.dataFine || "-"
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Giorni evento</span>' +
+        '<span class="report-valore">' +
+          formattaNumeroIntero(
+            dati.giorni
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Giorni analizzati</span>' +
+        '<span class="report-valore">' +
+          formattaNumeroIntero(
+            dati.giorniAnalizzati
+          ) +
+        '</span>' +
+      '</div>' +
+
+    '</div>' +
+
+
+    // =================================================
+    // DATI ECONOMICI
+    // =================================================
+
+    '<div class="report-sezione">' +
+      '📦 Dati economici' +
+    '</div>' +
+
+    '<div class="report-griglia">' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Fatturato</span>' +
+        '<span class="report-valore" style="color:#137333;">' +
+          formattaEuro(
+            dati.fatturato
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Costo merce</span>' +
+        '<span class="report-valore">' +
+          formattaEuro(
+            dati.costoMerce
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Fatturato / giorno</span>' +
+        '<span class="report-valore">' +
+          formattaEuro(
+            dati.fatturatoGiorno
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Margine</span>' +
+        '<span class="report-valore">' +
+          formattaEuro(
+            dati.margine
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">POS</span>' +
+        '<span class="report-valore">' +
+          formattaEuro(
+            dati.pos
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Contante</span>' +
+        '<span class="report-valore">' +
+          formattaEuro(
+            dati.contante
+          ) +
+        '</span>' +
+      '</div>' +
+
+    '</div>' +
+
+
+    // =================================================
+    // COSTI EVENTO ALLOCATI
+    // =================================================
+
+    '<div class="report-sezione">' +
+      '💶 Costi evento' +
+    '</div>' +
+
+    '<div class="report-griglia">' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Costo affitto</span>' +
+        '<span class="report-valore">' +
+          formattaEuro(
+            dati.costoAffitto
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Spese viaggio</span>' +
+        '<span class="report-valore">' +
+          formattaEuro(
+            dati.speseViaggio
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Spese vitto</span>' +
+        '<span class="report-valore">' +
+          formattaEuro(
+            dati.speseVitto
+          ) +
+        '</span>' +
+      '</div>' +
+
+      '<div class="report-campo">' +
+        '<span class="report-label">Spese extra</span>' +
+        '<span class="report-valore">' +
+          formattaEuro(
+            dati.speseExtra
+          ) +
+        '</span>' +
+      '</div>' +
+
+    '</div>' +
+
+
+    // =================================================
+    // RISULTATO NETTO
+    // =================================================
+
+    '<div class="report-netto">' +
+
+      '<div class="report-netto-titolo">' +
+        'RISULTATO NETTO PERIODO' +
+      '</div>' +
+
+      '<div' +
+        ' id="valoreRisultatoNetto"' +
+        ' class="report-netto-valore"' +
+      '>' +
+        formattaEuro(
+          dati.risultatoNetto
+        ) +
+      '</div>' +
+
+      '<div class="report-netto-giorno-label">' +
+        'Risultato netto / giorno' +
+      '</div>' +
+
+      '<div' +
+        ' id="valoreRisultatoNettoGiorno"' +
+        ' class="report-netto-giorno"' +
+      '>' +
+        formattaEuro(
+          dati.risultatoNettoGiorno
+        ) +
+      '</div>' +
+
+    '</div>' +
+
+
+    // =================================================
+    // VENDITE PER CATEGORIA
+    // =================================================
+
+    '<div id="reportCategorie" class="report-categorie">' +
+
+      '<div class="report-categorie-titolo">' +
+        '📊 Vendite per categoria' +
+      '</div>' +
+
+      '<div class="report-categorie-ordinamento">' +
+
+        '<label for="ordinamentoCategorie">' +
+          'Ordina per' +
+        '</label>' +
+
+        '<select' +
+          ' id="ordinamentoCategorie"' +
+          ' onchange="ordinaVenditePerCategoria()"' +
+        '>' +
+
+          '<option value="margine-desc">' +
+            'Margine totale ↓' +
+          '</option>' +
+
+          '<option value="margine-asc">' +
+            'Margine totale ↑' +
+          '</option>' +
+
+          '<option value="fatturato-desc">' +
+            'Fatturato totale ↓' +
+          '</option>' +
+
+          '<option value="fatturato-asc">' +
+            'Fatturato totale ↑' +
+          '</option>' +
+
+          '<option value="vendite-desc">' +
+            'Numero vendite ↓' +
+          '</option>' +
+
+          '<option value="vendite-asc">' +
+            'Numero vendite ↑' +
+          '</option>' +
+
+          '<option value="categoria-asc">' +
+            'Categoria A–Z' +
+          '</option>' +
+
+          '<option value="categoria-desc">' +
+            'Categoria Z–A' +
+          '</option>' +
+
+        '</select>' +
+
+      '</div>' +
+
+      '<div id="contenitoreTabellaCategorie">' +
+      '</div>' +
+
+    '</div>';
+
+
+  // ===================================================
+  // COLORE RISULTATO NETTO
+  // ===================================================
+
+  const netto =
+    document.getElementById(
+      "valoreRisultatoNetto"
+    );
+
+  const nettoGiorno =
+    document.getElementById(
+      "valoreRisultatoNettoGiorno"
+    );
+
+  if (!netto || !nettoGiorno) {
+    return;
+  }
+
+  if (
+    Number(dati.risultatoNetto) >= 0
+  ) {
+
+    netto.style.color =
+      "#137333";
+
+    nettoGiorno.style.color =
+      "#137333";
+
+  } else {
+
+    netto.style.color =
+      "#c5221f";
+
+    nettoGiorno.style.color =
+      "#c5221f";
+
+  }
+
+  // ===================================================
+  // MOSTRA CATEGORIE
+  // ===================================================
+
+  mostraVenditePerCategoria();
+
+}
+
+
+// =====================================================
+// MOSTRA VENDITE PER CATEGORIA
+// =====================================================
+
+function mostraVenditePerCategoria() {
+
+  const contenitore =
+    document.getElementById(
+      "contenitoreTabellaCategorie"
+    );
+
+  if (!contenitore) {
+    return;
+  }
+
+  if (
+    !Array.isArray(
+      venditePerCategoriaReport
+    ) ||
+    venditePerCategoriaReport.length === 0
+  ) {
+
+    contenitore.innerHTML =
+      '<div class="report-categorie-vuoto">' +
+      'Nessuna vendita nel periodo selezionato.' +
+      '</div>';
+
+    return;
+
+  }
+
+  const ordinamento =
+    document.getElementById(
+      "ordinamentoCategorie"
+    );
+
+  const criterio =
+    ordinamento
+      ? ordinamento.value
+      : "margine-desc";
+
+  const dati =
+    venditePerCategoriaReport
+      .slice();
+
+  dati.sort(function(a, b) {
+
+    const numeroA =
+      Number(a.numeroVendite) || 0;
+
+    const numeroB =
+      Number(b.numeroVendite) || 0;
+
+    const fatturatoA =
+      Number(a.fatturato) || 0;
+
+    const fatturatoB =
+      Number(b.fatturato) || 0;
+
+    const margineA =
+      Number(a.margine) || 0;
+
+    const margineB =
+      Number(b.margine) || 0;
+
+    const categoriaA =
+      String(
+        a.categoria || ""
+      ).toLowerCase();
+
+    const categoriaB =
+      String(
+        b.categoria || ""
+      ).toLowerCase();
+
+    if (criterio === "margine-desc") {
+      return margineB - margineA;
+    }
+
+    if (criterio === "margine-asc") {
+      return margineA - margineB;
+    }
+
+    if (criterio === "fatturato-desc") {
+      return fatturatoB - fatturatoA;
+    }
+
+    if (criterio === "fatturato-asc") {
+      return fatturatoA - fatturatoB;
+    }
+
+    if (criterio === "vendite-desc") {
+      return numeroB - numeroA;
+    }
+
+    if (criterio === "vendite-asc") {
+      return numeroA - numeroB;
+    }
+
+    if (criterio === "categoria-desc") {
+      return categoriaB.localeCompare(
+        categoriaA,
+        "it"
+      );
+    }
+
+    return categoriaA.localeCompare(
+      categoriaB,
+      "it"
+    );
+
+  });
+
+  let html =
+
+    '<table class="report-categorie-tabella">' +
+
+      '<thead>' +
+
+        '<tr>' +
+
+          '<th>Categoria</th>' +
+
+          '<th>Vendite</th>' +
+
+          '<th>Fatturato</th>' +
+
+          '<th>Margine</th>' +
+
+        '</tr>' +
+
+      '</thead>' +
+
+      '<tbody>';
+
+  dati.forEach(function(riga) {
+
+    const categoria =
+      String(
+        riga.categoria ||
+        "Senza categoria"
+      ).trim();
+
+    const numeroVendite =
+      Number(
+        riga.numeroVendite
+      ) || 0;
+
+    const fatturato =
+      Number(
+        riga.fatturato
+      ) || 0;
+
+    const margine =
+      Number(
+        riga.margine
+      ) || 0;
+
+    html +=
+
+      '<tr>' +
+
+        '<td title="' +
+          escapeHtml(categoria) +
+        '">' +
+          escapeHtml(categoria) +
+        '</td>' +
+
+        '<td>' +
+          formattaNumeroIntero(
+            numeroVendite
+          ) +
+        '</td>' +
+
+        '<td>' +
+          formattaEuro(
+            fatturato
+          ) +
+        '</td>' +
+
+        '<td class="report-categorie-margine">' +
+          formattaEuro(
+            margine
+          ) +
+        '</td>' +
+
+      '</tr>';
+
+  });
+
+  html +=
+      '</tbody>' +
+    '</table>';
+
+  contenitore.innerHTML =
+    html;
+
+}
+
+
+// =====================================================
+// ORDINA VENDITE PER CATEGORIA
+// =====================================================
+
+function ordinaVenditePerCategoria() {
+
+  mostraVenditePerCategoria();
+
+}
+
+
+// =====================================================
+// FORMATTA PERIODO REPORT
+// =====================================================
+
+function formattaPeriodoReport(
+  dal,
+  al
+) {
+
+  if (!dal || !al) {
+    return "-";
+  }
+
+  const partiDal =
+    String(dal).split("-");
+
+  const partiAl =
+    String(al).split("-");
+
+  if (
+    partiDal.length !== 3 ||
+    partiAl.length !== 3
+  ) {
+    return (
+      dal +
+      " - " +
+      al
+    );
+  }
+
+  const dalFormattato =
+    partiDal[2] +
+    "/" +
+    partiDal[1] +
+    "/" +
+    partiDal[0];
+
+  const alFormattato =
+    partiAl[2] +
+    "/" +
+    partiAl[1] +
+    "/" +
+    partiAl[0];
+
+  return (
+    dalFormattato +
+    " - " +
+    alFormattato
+  );
+
+}
+
+
+// =====================================================
+// FORMATTA EURO
+// =====================================================
+
+function formattaEuro(
+  numero
+) {
+
+  return (
+    "€ " +
+    formattaNumero(
+      Number(numero) || 0
+    )
+  );
+
+}
+
+
+// =====================================================
+// FORMATTA NUMERO INTERO
+// =====================================================
+
+function formattaNumeroIntero(
+  numero
+) {
+
+  return String(
+    Number(numero) || 0
+  );
+
+}
+
+
+// =====================================================
+// MESSAGGI
+// =====================================================
+
+function mostraMessaggio(
+  testo,
+  tipo
+) {
+
+  const elemento =
+    document.getElementById(
+      "messaggio"
+    );
+
+  elemento.innerText =
+    testo;
+
+  elemento.className =
+    "messaggio " +
+    tipo;
+
+  elemento.style.display =
+    "block";
+
+  setTimeout(
+    function() {
+
+      elemento.style.display =
+        "none";
+
+    },
+    4000
+  );
+
+}
+
+
+// =====================================================
+// FORMATTA NUMERO
+// =====================================================
+
+function formattaNumero(
+  numero
+) {
+
+  return Number(
+    numero
+  ).toLocaleString(
+    "it-IT",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+
+}
+
+
+// =====================================================
+// SICUREZZA HTML
+// =====================================================
+
+function escapeHtml(
+  testo
+) {
+
+  return String(testo)
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+// =====================================================
+// WORKAROUND iOS / VISUAL VIEWPORT
+// =====================================================
+
+(function() {
+
+  if (!window.visualViewport) {
+    return;
+  }
+
+  const ricerca =
+    document.getElementById(
+      "ricerca"
+    );
+
+  if (!ricerca) {
+    return;
+  }
+
+  let paginaScrollPrimaDelFocus =
+    0;
+
+  ricerca.addEventListener(
+    "focus",
+    function() {
+
+      paginaScrollPrimaDelFocus =
+        window.scrollY || 0;
+
+    }
+  );
+
+  ricerca.addEventListener(
+    "blur",
+    function() {
+
+      setTimeout(
+        function() {
+
+          window.scrollTo(
+            0,
+            paginaScrollPrimaDelFocus
+          );
+
+        },
+        300
+      );
+
+    }
+  );
+
+})();
+
+</script>
+
+
+<!-- SCANNER CAMERA NATIVO: funziona perché questa pagina è ospitata su GitHub Pages -->
+<div id="scannerIntegrato" class="scanner-integrato" aria-hidden="true">
+  <div class="scanner-integrato-header">
+    <div class="scanner-integrato-title">📷 Scanner barcode</div>
+    <button type="button" class="scanner-integrato-close" onclick="chiudiScannerIntegrato()">✕ CHIUDI</button>
+  </div>
+
+  <div class="scanner-camera-wrap">
+    <video id="cameraVideo" autoplay muted playsinline></video>
+    <div class="scanner-mirino-github"></div>
+  </div>
+
+  <div class="scanner-integrato-footer">
+    <div id="scannerIntegratoStato">Premi AVVIA FOTOCAMERA</div>
+    <div id="scannerIntegratoEsito"></div>
+    <div class="scanner-integrato-actions">
+      <button id="scannerCameraStart" type="button" onclick="avviaScannerIntegrato()">📷 AVVIA</button>
+      <button id="scannerCameraStop" type="button" onclick="fermaScannerIntegrato()" disabled>⏹ STOP</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://unpkg.com/@zxing/browser@0.1.5/umd/index.min.js"></script>
+<script>
+/* =====================================================
+   CONFIGURAZIONE BACKEND APPS SCRIPT
+   ===================================================== */
+const API_URL = "https://script.google.com/macros/s/AKfycbw0oz_k-DyJLd1OrkW9DXISrHJKxlUwO-9hGN1jiS0bR5-cdgzb3rCkme5vpdI7uKL5Nw/exec";
+const API_TIMEOUT_MS = 20000;
+
+/*
+ * L'API usa JSONP per evitare i problemi CORS del browser.
+ * Il backend Apps Script dovrà rispondere a:
+ *   ?api=1&action=getArticoli&callback=...
+ *   ?api=1&action=getLuoghi&callback=...
+ *   ?api=1&action=getArticoliRapidi&callback=...
+ *   ?api=1&action=getEventoLuogo&idEvento=...&callback=...
+ *   ?api=1&action=getEventi&callback=...
+ *   ?api=1&action=getReportEvento&idEvento=...&dataDal=...&dataAl=...&callback=...
+ *   ?api=1&action=registraVendita&data=<JSON>&callback=...
+ */
+function apiCall(action, params) {
+  return new Promise(function(resolve, reject) {
+    if (!API_URL || API_URL.indexOf("INCOLLA_QUI") === 0) {
+      reject(new Error("Configura API_URL con l'URL della Web App Apps Script."));
+      return;
+    }
+
+    const callbackName = "__apiCb_" + Date.now() + "_" +
+      Math.random().toString(36).slice(2);
+
+    const script = document.createElement("script");
+    let timer = null;
+
+    function cleanup() {
+      if (timer) clearTimeout(timer);
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = function(payload) {
+      cleanup();
+      if (payload && payload.ok === false) {
+        reject(new Error(payload.error || "Errore API"));
+        return;
+      }
+      resolve(payload ? payload.data : null);
+    };
+
+    const query = new URLSearchParams();
+    query.set("api", "1");
+    query.set("action", action);
+    query.set("callback", callbackName);
+
+    Object.keys(params || {}).forEach(function(key) {
+      const value = params[key];
+      if (value !== undefined && value !== null) {
+        query.set(key, typeof value === "string" ? value : JSON.stringify(value));
+      }
+    });
+
+    script.onerror = function() {
+      cleanup();
+      reject(new Error("Impossibile raggiungere il backend Apps Script."));
+    };
+
+    timer = setTimeout(function() {
+      cleanup();
+      reject(new Error("Timeout collegamento al backend Apps Script."));
+    }, API_TIMEOUT_MS);
+
+    script.src = API_URL + (API_URL.indexOf("?") >= 0 ? "&" : "?") + query.toString();
+    document.head.appendChild(script);
+  });
+}
+
+/* =====================================================
+   SCANNER NATIVO
+   ===================================================== */
+let scannerReaderIntegrato = null;
+let scannerStreamIntegrato = null;
+let scannerAttivoIntegrato = false;
+let ultimoBarcodeIntegrato = "";
+let ultimoBarcodeIntegratoTimestamp = 0;
+const BLOCCO_DUPLICATO_INTEGRATO_MS = 1800;
+
+function setStatoScannerIntegrato(testo) {
+  const el = document.getElementById("scannerIntegratoStato");
+  if (el) el.textContent = testo;
+}
+
+function setEsitoScannerIntegrato(testo) {
+  const el = document.getElementById("scannerIntegratoEsito");
+  if (el) el.textContent = testo;
+}
+
+function apriScannerIntegrato() {
+  const overlay = document.getElementById("scannerIntegrato");
+  if (!overlay) return;
+
+  overlay.classList.add("aperto");
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+
+  setEsitoScannerIntegrato("");
+  setStatoScannerIntegrato("Avvio fotocamera...");
+  avviaScannerIntegrato();
+}
+
+async function avviaScannerIntegrato() {
+  if (scannerAttivoIntegrato) return;
+
+  const video = document.getElementById("cameraVideo");
+  const start = document.getElementById("scannerCameraStart");
+  const stop = document.getElementById("scannerCameraStop");
+
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error("Il browser non supporta l'accesso alla fotocamera.");
+    }
+
+    scannerAttivoIntegrato = true;
+    start.disabled = true;
+    stop.disabled = false;
+    setStatoScannerIntegrato("Richiesta accesso alla fotocamera...");
+
+    scannerStreamIntegrato = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: { ideal: "environment" },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    });
+
+    video.srcObject = scannerStreamIntegrato;
+    await video.play();
+
+    setStatoScannerIntegrato("Fotocamera attiva — inquadra il barcode");
+
+    scannerReaderIntegrato = new ZXingBrowser.BrowserMultiFormatReader();
+
+    await scannerReaderIntegrato.decodeFromVideoElement(
+      video,
+      function(result, error) {
+        if (!scannerAttivoIntegrato || !result) return;
+
+        const codice = result.getText
+          ? result.getText()
+          : String(result.text || result);
+
+        gestisciBarcodeLetto(codice);
+
+        // Una lettura riuscita chiude lo scanner e libera la camera.
+        fermaScannerIntegrato();
+        chiudiScannerIntegrato();
+      }
+    );
+
+  } catch (errore) {
+    console.error("Errore fotocamera:", errore);
+    scannerAttivoIntegrato = false;
+    start.disabled = false;
+    stop.disabled = true;
+
+    if (errore && errore.name === "NotAllowedError") {
+      setStatoScannerIntegrato("Permesso fotocamera negato");
+      setEsitoScannerIntegrato("Consenti la fotocamera nelle autorizzazioni del browser.");
+    } else if (errore && errore.name === "NotFoundError") {
+      setStatoScannerIntegrato("Fotocamera non trovata");
+      setEsitoScannerIntegrato("Nessuna fotocamera disponibile.");
+    } else {
+      setStatoScannerIntegrato("Errore fotocamera");
+      setEsitoScannerIntegrato(errore && errore.message ? errore.message : String(errore));
+    }
+  }
+}
+
+function fermaScannerIntegrato() {
+  scannerAttivoIntegrato = false;
+
+  try {
+    if (scannerReaderIntegrato && typeof scannerReaderIntegrato.reset === "function") {
+      scannerReaderIntegrato.reset();
+    }
+  } catch (e) {
+    console.warn("Reset ZXing:", e);
+  }
+
+  scannerReaderIntegrato = null;
+
+  if (scannerStreamIntegrato) {
+    scannerStreamIntegrato.getTracks().forEach(function(track) {
+      try { track.stop(); } catch (e) {}
+    });
+    scannerStreamIntegrato = null;
+  }
+
+  const video = document.getElementById("cameraVideo");
+  if (video) video.srcObject = null;
+
+  const start = document.getElementById("scannerCameraStart");
+  const stop = document.getElementById("scannerCameraStop");
+  if (start) start.disabled = false;
+  if (stop) stop.disabled = true;
+
+  setStatoScannerIntegrato("Scanner fermato");
+}
+
+function chiudiScannerIntegrato() {
+  fermaScannerIntegrato();
+
+  const overlay = document.getElementById("scannerIntegrato");
+  if (overlay) {
+    overlay.classList.remove("aperto");
+    overlay.setAttribute("aria-hidden", "true");
+  }
+
+  document.body.style.overflow = "";
+}
+
+/* =====================================================
+   SOVRASCRITTURA FUNZIONI BACKEND DEL FRONTEND
+   ===================================================== */
+
+function caricaArticoli() {
+  apiCall("getArticoli")
+    .then(function(dati) {
+      articoli = Array.isArray(dati) ? dati : [];
+      mostraArticoliRapidi();
+    })
+    .catch(function(errore) {
+      console.error("Errore caricamento articoli:", errore);
+      mostraMessaggio("Errore nel caricamento degli articoli: " + errore.message, "errore");
+    });
+}
+
+function caricaLuoghi() {
+  apiCall("getLuoghi")
+    .then(function(luoghi) {
+      const select = document.getElementById("luogoVendita");
+      if (!select) return;
+
+      select.innerHTML = '<option value="">Seleziona il luogo...</option>';
+
+      if (!Array.isArray(luoghi)) return;
+
+      luoghi.forEach(function(luogo) {
+        const option = document.createElement("option");
+
+        if (typeof luogo === "object" && luogo !== null) {
+          const idEvento = luogo.idEvento || luogo.id || "";
+          option.value = String(idEvento).trim();
+          option.textContent = costruisciNomeEvento(luogo);
+          option.dataset.idEvento = String(idEvento).trim();
+          option.dataset.luogo = String(luogo.luogo || "").trim();
+          option.dataset.dataInizio = luogo.dataInizio || "";
+          option.dataset.dataFine = luogo.dataFine || "";
+        } else {
+          option.value = String(luogo);
+          option.textContent = String(luogo);
+          option.dataset.luogo = String(luogo);
+        }
+
+        select.appendChild(option);
+      });
+
+      const ultimoLuogo = localStorage.getItem("ultimoLuogoVendita");
+      if (ultimoLuogo) {
+        const trovata = Array.from(select.options).find(function(option) {
+          return option.value === ultimoLuogo;
+        });
+
+        if (trovata) {
+          select.value = trovata.value;
+          luogoVendita = trovata.value;
+          caricaEventoSelezionatoDalMenu(trovata);
+        }
+      }
+
+      aggiornaPulsante();
+    })
+    .catch(function(errore) {
+      console.error("Errore caricamento luoghi:", errore);
+      mostraMessaggio("Errore nel caricamento dei luoghi: " + errore.message, "errore");
+    });
+}
+
+function caricaArticoliRapidi() {
+  apiCall("getArticoliRapidi")
+    .then(function(codici) {
+      articoliRapidi = Array.isArray(codici) ? codici : [];
+      mostraArticoliRapidi();
+    })
+    .catch(function(errore) {
+      console.error("Errore articoli rapidi:", errore);
+    });
+}
+
+function caricaEventoSelezionatoDalMenu(option) {
+  const luogo = option.dataset.luogo || option.textContent || option.value;
+  const idEvento = option.dataset.idEvento || option.value;
+
+  if (!luogo) {
+    nascondiEvento();
+    return;
+  }
+
+  if (option.dataset.dataInizio && option.dataset.dataFine) {
+    mostraEvento({
+      dataInizio: option.dataset.dataInizio,
+      dataFine: option.dataset.dataFine,
+      giorni: calcolaGiorni(option.dataset.dataInizio, option.dataset.dataFine)
+    });
+    return;
+  }
+
+  apiCall("getEventoLuogo", { idEvento: idEvento })
+    .then(function(evento) {
+      if (!evento) {
+        nascondiEvento();
+        return;
+      }
+      mostraEvento(evento);
+    })
+    .catch(function(errore) {
+      console.error("Errore caricamento evento:", errore);
+      nascondiEvento();
+    });
+}
+
+function caricaListaEventiReport() {
+  const select = document.getElementById("selettoreReportEvento");
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Caricamento eventi...</option>';
+
+  apiCall("getEventi")
+    .then(function(eventi) {
+      eventiDisponibili = Array.isArray(eventi) ? eventi : [];
+
+      select.innerHTML = '<option value="">Seleziona un evento...</option>';
+
+      if (!eventiDisponibili.length) {
+        select.innerHTML = '<option value="">Nessun evento disponibile</option>';
+        nascondiPeriodoReport();
+        document.getElementById("contenutoReportEvento").innerHTML =
+          '<div class="report-campo"><span class="report-label">Nessun evento disponibile.</span></div>';
+        return;
+      }
+
+      eventiDisponibili.forEach(function(evento) {
+        if (!evento) return;
+
+        const option = document.createElement("option");
+        const idEvento = evento.idEvento || evento.id || "";
+        const luogo = evento.luogo || "";
+
+        option.value = String(idEvento);
+        option.textContent = costruisciNomeEvento(evento);
+        option.dataset.idEvento = String(idEvento);
+        option.dataset.dataInizio = evento.dataInizio || "";
+        option.dataset.dataFine = evento.dataFine || "";
+        option.dataset.luogo = luogo;
+
+        select.appendChild(option);
+      });
+
+      // Mantiene la logica già presente nel file per l'evento predefinito.
+      const idPredefinito = typeof getIdEventoReportPredefinito === "function"
+        ? getIdEventoReportPredefinito()
+        : "";
+
+      if (idPredefinito) {
+        select.value = idPredefinito;
+        idEventoReportSelezionato = idPredefinito;
+        inizializzaPeriodoReport();
+        caricaReportEventoSelezionato();
+      }
+    })
+    .catch(function(errore) {
+      console.error("ERRORE getEventi():", errore);
+      select.innerHTML = '<option value="">Errore caricamento eventi</option>';
+      nascondiPeriodoReport();
+    });
+}
+
+function caricaReportEventoSelezionato() {
+  const select = document.getElementById("selettoreReportEvento");
+  const contenitore = document.getElementById("contenutoReportEvento");
+  if (!select || !contenitore) return;
+
+  const idEvento = select.value;
+  idEventoReportSelezionato = idEvento;
+
+  if (!idEvento) {
+    nascondiPeriodoReport();
+    contenitore.innerHTML =
+      '<div class="report-campo"><span class="report-label">Seleziona un evento per visualizzare il report</span></div>';
+    return;
+  }
+
+  mostraPeriodoReport();
+
+  const dataDal = document.getElementById("reportDataDal").value;
+  const dataAl = document.getElementById("reportDataAl").value;
+
+  if (!dataDal || !dataAl) return;
+
+  if (dataAl < dataDal) {
+    contenitore.innerHTML =
+      '<div class="report-campo"><span class="report-label" style="color:#c5221f;">Intervallo date non valido.</span></div>';
+    return;
+  }
+
+  contenitore.innerHTML =
+    '<div class="report-campo"><span class="report-label">Caricamento report...</span></div>';
+
+  apiCall("getReportEvento", {
+    idEvento: idEvento,
+    dataDal: dataDal,
+    dataAl: dataAl
+  })
+    .then(function(dati) {
+      if (!dati) {
+        contenitore.innerHTML =
+          '<div class="report-campo"><span class="report-label">Report non disponibile.</span></div>';
+        return;
+      }
+      mostraReportEvento(dati);
+    })
+    .catch(function(errore) {
+      console.error("Errore caricamento report:", errore);
+      contenitore.innerHTML =
+        '<div class="report-campo"><span class="report-label" style="color:#c5221f;">Errore nel caricamento del report.</span></div>';
+    });
+}
+
+function registraVendita() {
+  // Mantiene integralmente la validazione/calcolo già presente:
+  // ricreiamo i dati con la stessa struttura usata dal backend esistente.
+  if (!articoloScelto || !pagamento || !luogoVendita) {
+    mostraMessaggio("Seleziona articolo, pagamento e luogo.", "errore");
+    return;
+  }
+
+  const idEvento = getIdEventoReale();
+  if (!idEvento) {
+    mostraMessaggio("Evento non selezionato. Seleziona nuovamente il luogo/evento.", "errore");
+    return;
+  }
+
+  let prezzoFinale = 0;
+
+  if (tipoPrezzo === "consigliato") {
+    prezzoFinale = Number(articoloScelto.prezzo);
+  } else if (tipoPrezzo === "30") {
+    prezzoFinale = Number(articoloScelto.prezzo) * 0.70;
+  } else if (tipoPrezzo === "50") {
+    prezzoFinale = Number(articoloScelto.prezzo) * 0.50;
+  } else if (tipoPrezzo === "libero") {
+    prezzoFinale = Number(document.getElementById("prezzoPersonalizzato").value);
+  }
+
+  if (!Number.isFinite(prezzoFinale) || prezzoFinale < 0) {
+    mostraMessaggio("Prezzo di vendita non valido.", "errore");
+    return;
+  }
+
+  const dati = {
+    codice: articoloScelto.codice,
+    descrizione: articoloScelto.descrizione,
+    prezzoConsigliato: Number(articoloScelto.prezzo),
+    prezzoAcquisto: Number(articoloScelto.prezzoAcquisto) || 0,
+    tipoPrezzo: getNomeTipoPrezzo(),
+    prezzoApplicato: prezzoFinale,
+    pagamento: pagamento,
+    luogo: getLuogoReale(),
+    idEvento: idEvento,
+    categoria: articoloScelto.categoria || ""
+  };
+
+  const pulsante = document.getElementById("pulsanteRegistra");
+  if (pulsante) {
+    pulsante.disabled = true;
+    pulsante.innerText = "REGISTRAZIONE...";
+  }
+
+  apiCall("registraVendita", { data: dati })
+    .then(function() {
+      mostraMessaggio("✓ Vendita registrata correttamente!", "successo");
+      nuovaVendita();
+    })
+    .catch(function(errore) {
+      console.error("Errore registrazione vendita:", errore);
+      mostraMessaggio("Errore: " + errore.message, "errore");
+      if (pulsante) {
+        pulsante.disabled = false;
+        pulsante.innerText = "REGISTRA VENDITA";
+      }
+    });
+}
+</script>
+
+</body>
+
+</html>
